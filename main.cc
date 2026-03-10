@@ -12,36 +12,46 @@
 #include "./Libs/CustomLibs/Utils.h"
 
 #include "./Code/GameStatus.h"
-#include "./Code/BillBox.h"
-#include "./Code/Pokemon.h"
-
-TList::TList lista;
 
 void EmptyMemory(){
-    Pokemon::EmptyMemory();
-    BillBox::EmptyMemory();
+
 }
 
 void CloseFiles(){
-    Pokemon::CloseFiles();
 }
 
 
 void InitGame(){
-    Pokemon::Init();
-    BillBox::Init();
 }
 
 void UpdateGame(){
-    GameStatus::Update();
+    GameStatus::DebugUpdate();
     switch(GameStatus::game_status.level){
-        case GameStatus::Level::BILLBOX :
-            BillBox::Update();
-        break;
-        case GameStatus::Level::WORLD :
+        case GameStatus::Level::LOGIN_MENU :
 
         break;
-        case GameStatus::Level::BATTLE :
+
+        case GameStatus::Level::REGISTER_MENU :
+
+        break;
+
+        case GameStatus::Level::MAIN_MENU :
+
+        break;
+
+        case GameStatus::Level::HIGHSCORES :
+
+        break;
+
+        case GameStatus::Level::ADMIN_MENU :
+
+        break;
+
+        case GameStatus::Level::PLAY_MENU :
+
+        break;
+
+        case GameStatus::Level::GAME :
 
         break;
     }
@@ -50,14 +60,32 @@ void UpdateGame(){
 void DrawGame(){
     esat::DrawClear(0,0,0);
     switch(GameStatus::game_status.level){
-        case GameStatus::Level::BILLBOX :
-            BillBox::Draw();
+        case GameStatus::Level::LOGIN_MENU :
+            esat::DrawClear(100,100,200);
         break;
-        case GameStatus::Level::WORLD :
-            esat::DrawClear(0,200,0);
+
+        case GameStatus::Level::REGISTER_MENU :
+            esat::DrawClear(50,50,200);
         break;
-        case GameStatus::Level::BATTLE :
-            esat::DrawClear(100,0,0);
+
+        case GameStatus::Level::MAIN_MENU :
+            esat::DrawClear(100,100,100);
+        break;
+
+        case GameStatus::Level::HIGHSCORES :
+            esat::DrawClear(200,100,100);
+        break;
+
+        case GameStatus::Level::ADMIN_MENU :
+            esat::DrawClear(200,50,200);
+        break;
+
+        case GameStatus::Level::PLAY_MENU :
+            esat::DrawClear(200,200,200);
+        break;
+
+        case GameStatus::Level::GAME :
+            esat::DrawClear(0,0,0);
         break;
     }
 }
@@ -68,7 +96,7 @@ int esat::main(int argc, char **argv) {
 	esat::WindowInit(Utils::kWindowWidth, Utils::kWindowHeight);
 	WindowSetMouseVisibility(true);
 
-    esat::DrawSetTextFont("./Assets/Fonts/pokemon_classic.ttf");
+    esat::DrawSetTextFont("./Assets/Fonts/asteroids-display.otf");
 
     InitGame();
 

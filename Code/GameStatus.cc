@@ -13,20 +13,29 @@
 namespace GameStatus{
     GameStatus game_status;
 
-    void Update(){
+    void DebugUpdate(){
         //Level switch
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F1)){
-            game_status.level = BILLBOX;
+            game_status.level = LOGIN_MENU;
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F2)){
-            game_status.level = WORLD;
+            game_status.level = REGISTER_MENU;
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F3)){
-            game_status.level = BATTLE;
-
+            game_status.level = MAIN_MENU;
         }
-
-
+        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F4)){
+            game_status.level = HIGHSCORES;
+        }
+        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F5)){
+            game_status.level = ADMIN_MENU;
+        }
+        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F6)){
+            game_status.level = PLAY_MENU;
+        }
+        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F7)){
+            game_status.level = GAME;
+        }
     }
 
 }

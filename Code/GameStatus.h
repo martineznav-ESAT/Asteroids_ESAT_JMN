@@ -14,19 +14,22 @@
 namespace GameStatus{
 
     enum Level{
-        BILLBOX,
-        WORLD,
-        BATTLE
+        LOGIN_MENU,
+        REGISTER_MENU,
+        MAIN_MENU,
+        HIGHSCORES,
+        ADMIN_MENU,
+        PLAY_MENU,
+        GAME
     };
 
     struct GameStatus{
-        Level level = BILLBOX;
-        int last_pkm_id = -1;
+        Level level = LOGIN_MENU;
     };
 
     extern GameStatus game_status;
 
-    void Update();
+    void DebugUpdate();
 }
 
 #endif
