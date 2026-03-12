@@ -25,7 +25,7 @@ namespace Utils{
 
     extern const unsigned char kFPS;
     extern const int kWindowWidth, kWindowHeight;
-    extern const int base_font_size;
+    extern const int kBaseFontSize;
 
     extern double current_time,last_time;
     // Genera nueva semilla en base al 

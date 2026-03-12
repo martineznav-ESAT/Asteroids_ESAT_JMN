@@ -14,7 +14,7 @@
 #define UILib_H
 
 namespace UILib{
-    extern const int max_text_length = 30;
+    extern const int kMaxTextLength;
 
     //UI Text structure (only aesthetic related values, not position)
     struct Text{
@@ -35,6 +35,8 @@ namespace UILib{
     //Executes the function used as parameter.
     void LaunchAction(void (*action)());
 
+    void ButtonUpdate(Button *buttons, int total_btns);
+    
     //Given an int value, it will draw it 
     //on screen as a text 
     void DrawIntText(float x, float y, int value);

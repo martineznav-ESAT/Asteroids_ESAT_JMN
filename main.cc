@@ -12,6 +12,7 @@
 #include "./Libs/CustomLibs/Utils.h"
 
 #include "./Code/GameStatus.h"
+#include "./Code/LoginMenu.h"
 
 void EmptyMemory(){
 
@@ -22,13 +23,14 @@ void CloseFiles(){
 
 
 void InitGame(){
+    LoginMenu::Init();
 }
 
 void UpdateGame(){
     GameStatus::DebugUpdate();
     switch(GameStatus::game_status.level){
         case GameStatus::Level::LOGIN_MENU :
-        
+            LoginMenu::Update();
         break;
 
         case GameStatus::Level::REGISTER_MENU :
@@ -61,7 +63,8 @@ void DrawGame(){
     esat::DrawClear(0,0,0);
     switch(GameStatus::game_status.level){
         case GameStatus::Level::LOGIN_MENU :
-            esat::DrawClear(100,100,200);
+            esat::DrawClear(0,0,0);
+            LoginMenu::Draw();
         break;
 
         case GameStatus::Level::REGISTER_MENU :
@@ -96,7 +99,7 @@ int esat::main(int argc, char **argv) {
 	esat::WindowInit(Utils::kWindowWidth, Utils::kWindowHeight);
 	WindowSetMouseVisibility(true);
 
-    esat::DrawSetTextFont("./Assets/Fonts/asteroids-display.otf");
+    esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.otf");
 
     InitGame();
 

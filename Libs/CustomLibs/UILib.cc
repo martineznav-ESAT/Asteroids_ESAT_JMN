@@ -14,7 +14,9 @@
 #include "../../Code/GameStatus.h"
 
 namespace UILib{
-    //BUTTONS 
+    const int kMaxTextLength = 30;
+
+    //BUTTONS
 
     void LaunchAction(void (*action)()){
         if(action != nullptr){
@@ -45,7 +47,6 @@ namespace UILib{
             b->color.a = 230;
         }
     }
-
 
     void ButtonUpdate(Button *buttons, int total_btns){
         for(int i = 0; i < total_btns; i++){
@@ -81,16 +82,17 @@ namespace UILib{
             esat::DrawSetStrokeColor(b.color.r, b.color.g, b.color.b, b.color.a);
             esat::DrawSetFillColor(b.color.r, b.color.g, b.color.b, b.color.a);
             esat::DrawSolidPath(&(draw_coords->x), 5);
-            free(draw_coords);
 
             //In case the button has a text, it's drawn centered to the button
             if(b.button_text.text != nullptr){
                 UILib::DrawText(
-                    b.collider.P1.x + ((b.collider.P2.x-b.collider.P1.x) * 0.5f) - (strlen(b.button_text.text) * b.button_text.font_size*0.5f),
+                    b.collider.P1.x + ((b.collider.P2.x-b.collider.P1.x) * 0.5f) - (strlen(b.button_text.text) * 0.33 * b.button_text.font_size ),
                     b.collider.P2.y - ((b.collider.P2.y-b.collider.P1.y) * 0.5f) + (b.button_text.font_size*0.5f), 
                     b.button_text
                 );
             }
+
+            free(draw_coords);
         }
     }
 }
