@@ -1,4 +1,4 @@
-# Asteroids_ESAT_JMN
+# Asteroids_ESAT
 Versión del videojuego arcade clásico de Atari Asteroids desarrollada por Jonathan Martínez Navarro a modo de proyecto de práctica para Escuela Superior de Arte y Tecnología (ESAT) bajo la tutela de Federico Sanjuan.
 
 -- Trata de ser lo mas fiel posible al original en cuanto a gameplay junto a manejo local de usuarios.
