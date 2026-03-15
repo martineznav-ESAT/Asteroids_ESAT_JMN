@@ -16,12 +16,13 @@
 #define LoginMenu_H
 
 namespace LoginMenu{
-    enum LoginButtons{
-        LOGIN,
-        REGISTER,
-        BACK,
-        BACK_ADMIN,
-        TOTAL_BUTTONS
+    
+    enum LoginItems{
+        USER_TI,
+        PASSWD_TI,
+        LOGIN_BTN,
+        VARIABLE_BTN,
+        TOTAL_ITEMS
     };
 
     void Init();

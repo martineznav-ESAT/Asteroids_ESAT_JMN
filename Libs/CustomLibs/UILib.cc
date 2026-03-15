@@ -14,52 +14,19 @@
 #include "../../Code/GameStatus.h"
 
 namespace UILib{
-    const int kMaxTextLength = 30;
+    const int kMaxTextLength = 20;
 
-    //BUTTON
-
-    //Executes the given function
-    //Gives a print in case its given null
-    //Mainly thought for buttons or similar action-like UI elements and keyboard inputs
-    void LaunchAction(void (*action)()){
-        if(action != nullptr){
-            action();
-        }else{
-            printf("Action WIP\n");
-        }
+    //UI_ITEM
+    void InitItem(UI_Item* ui_item, ItemType it, Text name){
+        *ui_item = {
+            it,
+            name,
+            NULL,
+            false
+        };
     }
-
-    //Detects if the mouse is inside a button area
-    bool MouseInButton(Button b){
-        return (
-            b.collider.P1.x < esat::MousePositionX() &&
-            b.collider.P1.y < esat::MousePositionY() &&
-            b.collider.P2.x > esat::MousePositionX() &&
-            b.collider.P2.y > esat::MousePositionY()
-        );
-    }
-
-    //Changes button color in case the mouse is hovering on it
-    //and grants acces to click the button if that's the case
-    void OnButtonHover(Button *b){
-        if(b->is_visible && MouseInButton(*b)){
-            //OnHover
-            b->color.a = 255;
-            if(esat::MouseButtonDown(0)){
-                //OnClick
-                LaunchAction(b->action);
-            }
-        }else{
-            b->color.a = 230;
-        }
-    }
-
-    //Given a button memory block, it all gets checked to manage button workability
-    void ButtonUpdate(Button *buttons, int total_btns){
-        for(int i = 0; i < total_btns; i++){
-            OnButtonHover((buttons+i));
-        }
-    }
+    
+    //TEXT
 
     //Draws a text given a position and Text structure 
     void DrawText(float x, float y, Text text){
@@ -76,21 +43,59 @@ namespace UILib{
         free(text);
     }
 
+
+
+    //BUTTON
+
+    //Executes the given function
+    //Gives a print in case its given null
+    //Mainly thought for buttons or similar action-like UI elements and keyboard inputs
+    void LaunchAction(void (*action)()){
+        if(action != nullptr){
+            action();
+        }else{
+            printf("Action WIP\n");
+        }
+    }
+
+    //Changes button color in case the mouse is hovering on it
+    //and grants acces to click the button if that's the case
+    void OnButtonHover(Button *b){
+        if(b->is_visible && Utils::MouseInCollider(b->collider)){
+            //OnHover
+            b->border_color.a = 255;
+            b->fill_color.a = 255;
+            if(esat::MouseButtonDown(0)){
+                //OnClick
+                LaunchAction(b->action);
+            }
+        }else{
+            b->border_color.a = 230;
+            b->fill_color.a = 230;
+        }
+    }
+
+    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
+    void InitButton(UILib::Button *b, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text b_text, bool is_visible, void (*action)()){
+        *b = {
+            coll,
+            border_color,
+            fill_color,
+            b_text,
+            is_visible,
+            action
+        };
+    }
+
+    //Given a button, it gets checked to manage workability
+    void UpdateButton(Button *button){
+        OnButtonHover(button);
+    }
+
     //Draws on screen the button given as parameter
     void DrawButton(Button b){
         if(b.is_visible){
-            //Generates draw coords and draws de button collider with the button values
-            JMATH::Vec2 *draw_coords = (JMATH::Vec2*) malloc(sizeof(JMATH::Vec2) * 5);
-
-            *(draw_coords+0) = b.collider.P1;
-            *(draw_coords+1) = {b.collider.P1.x, b.collider.P2.y};
-            *(draw_coords+2) = b.collider.P2;
-            *(draw_coords+3) = {b.collider.P2.x, b.collider.P1.y};
-            *(draw_coords+4) = b.collider.P1;
-
-            esat::DrawSetStrokeColor(b.color.r, b.color.g, b.color.b, b.color.a);
-            esat::DrawSetFillColor(b.color.r, b.color.g, b.color.b, b.color.a);
-            esat::DrawSolidPath(&(draw_coords->x), 5);
+            Utils::DrawCollider(b.collider, b.border_color, b.fill_color);
 
             //In case the button has a text, it's drawn centered to the button
             if(b.button_text.text != nullptr){
@@ -100,11 +105,45 @@ namespace UILib{
                     b.button_text
                 );
             }
-
-            free(draw_coords);
         }
     }
 
+
+
     //TEXT_INPUT
 
+    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
+    void InitTextInput(UILib::TextInput *ti, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text ti_text, bool is_visible){
+        *ti = {
+            coll,
+            border_color,
+            fill_color,
+            ti_text,
+            is_visible
+        };
+    }
+
+    //Given a Text Input, it gets checked to manage input workability
+    void UpdateTextInput(TextInput *ti){
+        if(Utils::MouseInCollider(ti->input_box)){
+            printf("INPUT TEXT SELECCIONABLE\n");
+        }
+    }
+
+    //Draws on screen the TextInput given as parameter
+    void DrawTextInput(TextInput ti){
+        if(ti.is_visible){
+
+            Utils::DrawCollider(ti.input_box, ti.border_color, ti.fill_color);
+
+            if(ti.input_text.text != nullptr){
+                //Draws the text centered vertically inside de input box and aligned to the left horizontaly
+                UILib::DrawText(
+                    ti.input_box.P1.x + ti.input_text.font_size*0.66f,
+                    ti.input_box.P2.y - ((ti.input_box.P2.y - ti.input_box.P1.y) * 0.5) + (ti.input_text.font_size * 0.5f), 
+                    ti.input_text
+                );
+            }
+        }
+    }
 }

@@ -45,10 +45,37 @@ namespace Utils{
         }while((current_time-last_time)<=1000.0/kFPS);
     }
 
+    //Detects if the mouse is inside the collider area
+    bool MouseInCollider(Collider c){
+        return (
+            c.P1.x < esat::MousePositionX() &&
+            c.P1.y < esat::MousePositionY() &&
+            c.P2.x > esat::MousePositionX() &&
+            c.P2.y > esat::MousePositionY()
+        );
+    }
+
     void DrawIntText(float x, float y, int value){
         char* text = (char*) malloc(sizeof(char)*3);
         text = itoa(value,text,10);
         esat::DrawText(x, y, text);
         free(text);
+    }
+
+    void DrawCollider(Collider c, Color border_color, Color fill_color){
+        //Generates draw coords and draws de button collider with the button values
+        JMATH::Vec2 *draw_coords = (JMATH::Vec2*) malloc(sizeof(JMATH::Vec2) * 5);
+
+        *(draw_coords+0) = c.P1;
+        *(draw_coords+1) = {c.P1.x, c.P2.y};
+        *(draw_coords+2) = c.P2;
+        *(draw_coords+3) = {c.P2.x, c.P1.y};
+        *(draw_coords+4) = c.P1;
+
+        esat::DrawSetStrokeColor(border_color.r, border_color.g, border_color.b, border_color.a);
+        esat::DrawSetFillColor(fill_color.r, fill_color.g, fill_color.b, fill_color.a);
+        esat::DrawSolidPath(&(draw_coords->x), 5);
+
+        free(draw_coords);
     }
 }

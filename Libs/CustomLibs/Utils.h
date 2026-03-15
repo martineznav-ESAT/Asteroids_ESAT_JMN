@@ -28,12 +28,13 @@ namespace Utils{
     extern const int kBaseFontSize;
 
     extern double current_time,last_time;
-    // Genera nueva semilla en base al 
-    // ms del reloj del sistema
+
+    //Generates a new random number seed based
+    //on clock system ms 
     void GenerateRandomSeed();
 
-    //Genera un número del 0 al límite indicado
-    int GenerateRandomNumber(int limite);
+    //Generates a random number between 0 and limit
+    int GenerateRandomNumber(int limit);
 
     int GetPointerIndex(int row, int col_t, int col);
 
@@ -43,7 +44,12 @@ namespace Utils{
 
     void ControlFps();
 
+    //Detects if the mouse is inside the collider area
+    bool MouseInCollider(Collider c);
+
     void DrawIntText(float x, float y, int value);
+
+    void DrawCollider(Collider c, Color border_color, Color fill_color);
 }
 
 #endif
