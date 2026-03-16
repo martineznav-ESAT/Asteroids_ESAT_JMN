@@ -189,7 +189,7 @@ namespace UILib{
             *(string+old_length+1) = '\0';
             is_input = true;
         }else{
-            if(strlen(string) > 0 && esat::IsKeyDown(esat::kSpecialKey_Backspace)){
+            if(strlen(string) > 0 && esat::IsSpecialKeyDown(esat::kSpecialKey_Backspace)){
                 *(string+strlen(string)-1) = '\0';
                 is_input = true;
             }
