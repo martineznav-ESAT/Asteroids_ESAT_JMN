@@ -54,7 +54,7 @@ namespace UILib{
     }
     
     void DrawItem(UI_Item ui_item){
-        Utils::Collider left_side = {{(Utils::kWindowWidth*0.5f)- 40 - (Utils::kBaseFontSize*14), 200}, {(Utils::kWindowWidth*0.5f)-40, 250}};
+        Utils::Collider left_side = {{(Utils::kWindowWidth*0.5f)- 50 - (Utils::kBaseFontSize*14), 200}, {(Utils::kWindowWidth*0.5f)-50, 250}};
         Utils::Collider aux;
 
         switch (ui_item.item_type){

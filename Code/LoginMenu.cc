@@ -14,10 +14,12 @@
 
 #include "./GameStatus.h"
 #include "./LoginMenu.h"
+#include "./RegisterMenu.h"
 
 namespace LoginMenu{
     //Memory block that holds all the buttons no matter if they are visible or not.
     UILib::UI_Item *menu_items = nullptr;
+    GameStatus::Level prev_level;
     int selected_item = -1;
 
 
@@ -27,7 +29,15 @@ namespace LoginMenu{
     }
 
     void RegisterAction(){
-        printf("REGISTER ACTION WIP\n");
+        RegisterMenu::Load(GameStatus::Level::LOGIN_MENU);
+    }
+
+    void BackAction(){
+        printf("BACK ACTION WIP\n");
+    }
+
+    void BackAdminAction(){
+        printf("BACKADMIN ACTION WIP\n");
     }
 
     //LOGIN MENU INIT
@@ -49,7 +59,7 @@ namespace LoginMenu{
         Utils::Color button_color = {100,100,100,200};
         Utils::Color text_color = {255,255,255,255};
 
-        InitButton(
+        UILib::InitButton(
             &((menu_items+((int)LoginItems::LOGIN_BTN))->item.btn_item),
             left_button,
             button_color,
@@ -63,7 +73,7 @@ namespace LoginMenu{
             LoginAction
         );
 
-        InitButton(
+        UILib::InitButton(
             &((menu_items+((int)LoginItems::VARIABLE_BTN))->item.btn_item),
             right_button,
             button_color,
@@ -139,26 +149,27 @@ namespace LoginMenu{
     //LOGIN MENU LOAD
 
     //Based on the level/screen you come from, the Login Menu will be loaded differently
-    void Load(GameStatus::Level prev_level){
-        // switch(prev_level){
-        //     case GameStatus::Level::PLAY_MENU:
-        //         (buttons+((int)LoginButtons::REGISTER))->is_visible = false;
-        //         (buttons+((int)LoginButtons::BACK))->is_visible = true;
-        //         (buttons+((int)LoginButtons::BACK_ADMIN))->is_visible = false;
-        //     break;
+    void Load(GameStatus::Level level_p){
+        switch(level_p){
+            case GameStatus::Level::PLAY_MENU:
+                // (buttons+((int)LoginButtons::REGISTER))->is_visible = false;
+                // (buttons+((int)LoginButtons::BACK))->is_visible = true;
+                // (buttons+((int)LoginButtons::BACK_ADMIN))->is_visible = false;
+            break;
 
-        //     case GameStatus::Level::ADMIN_MENU:
-        //         (buttons+((int)LoginButtons::REGISTER))->is_visible = false;
-        //         (buttons+((int)LoginButtons::BACK))->is_visible = false;
-        //         (buttons+((int)LoginButtons::BACK_ADMIN))->is_visible = true;
-        //     break;
+            case GameStatus::Level::ADMIN_MENU:
+                // (buttons+((int)LoginButtons::REGISTER))->is_visible = false;
+                // (buttons+((int)LoginButtons::BACK))->is_visible = false;
+                // (buttons+((int)LoginButtons::BACK_ADMIN))->is_visible = true;
+            break;
             
-        //     default:
-        //         (buttons+((int)LoginButtons::REGISTER))->is_visible = true;
-        //         (buttons+((int)LoginButtons::BACK))->is_visible = false;
-        //         (buttons+((int)LoginButtons::BACK_ADMIN))->is_visible = false;
-        //     break;
-        // }
+            default:
+                (menu_items+((int)LoginItems::VARIABLE_BTN))->item.btn_item.action = RegisterAction;
+                (menu_items+((int)LoginItems::VARIABLE_BTN))->item.btn_item.button_text.text = "REGISTER";
+            break;
+        }
+
+        GameStatus::game_status.level = GameStatus::Level::LOGIN_MENU;
     }
 
     //LOGIN MENU UPDATE

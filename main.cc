@@ -13,6 +13,7 @@
 
 #include "./Code/GameStatus.h"
 #include "./Code/LoginMenu.h"
+#include "./Code/RegisterMenu.h"
 
 void EmptyMemory(){
     LoginMenu::EmptyMemory();
@@ -24,6 +25,7 @@ void CloseFiles(){
 
 void InitGame(){
     LoginMenu::Init();
+    RegisterMenu::Init();
 }
 
 void UpdateGame(){
@@ -34,7 +36,7 @@ void UpdateGame(){
         break;
 
         case GameStatus::Level::REGISTER_MENU :
-
+            RegisterMenu::Update();
         break;
 
         case GameStatus::Level::MAIN_MENU :
@@ -63,12 +65,11 @@ void DrawGame(){
     esat::DrawClear(0,0,0);
     switch(GameStatus::game_status.level){
         case GameStatus::Level::LOGIN_MENU :
-            esat::DrawClear(0,0,0);
             LoginMenu::Draw();
         break;
 
         case GameStatus::Level::REGISTER_MENU :
-            esat::DrawClear(50,50,200);
+            RegisterMenu::Draw();
         break;
 
         case GameStatus::Level::MAIN_MENU :
