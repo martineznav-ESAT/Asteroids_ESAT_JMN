@@ -42,6 +42,7 @@ namespace UILib{
 
     //UI TextInput structure
     struct TextInput{
+        Utils::Collider tag_box;
         Utils::Collider input_box;
         Utils::Color border_color;
         Utils::Color fill_color;
@@ -51,16 +52,22 @@ namespace UILib{
         float blink_timer = 0.0f;
         char* pointer = nullptr;
         bool is_pointer_v = false;
+        bool is_tag_v = true;
+        bool is_number_only = false;
+        int max_length;
     };
 
     //UI Checkbox structure
     struct Checkbox{
-        Utils::Collider input_box;
+        Utils::Collider tag_box;
+        Utils::Collider collider;
         Utils::Color border_color;
         Utils::Color fill_color;
+        Text button_text;
         bool is_checked;
         bool is_visible;
         bool is_selected;
+        bool is_tag_v = true;
     };
 
     union ItemSelection{
@@ -95,13 +102,13 @@ namespace UILib{
     void DrawButton(Button b);
 
     //Given a TextInput as parameter, fills it with the rest of the parameters. Created mainly for readability
-    void InitTextInput(TextInput *ti, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, Text ti_text, bool is_visible);
+    void InitTextInput(TextInput *ti, Utils::Collider tag_box, Utils::Collider input_box, Utils::Color border_color, Utils::Color fill_color, Text ti_text, bool is_visible, bool is_tag_v, bool is_number_only, int max_length = kMaxTextLength);
 
     //Given a TextInput, it gets checked to manage workability
     void UpdateTextInput(TextInput *ti);
 
     //Draws on screen the TextInput given as parameter
-    void DrawTextInput(TextInput ti);
+    void DrawTextInput(TextInput ti, Text tag);
 
     //Draws a text given a position and Text structure 
     void DrawText(float x, float y, Text text);

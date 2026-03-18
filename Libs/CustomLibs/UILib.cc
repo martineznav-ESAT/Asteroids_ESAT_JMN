@@ -54,23 +54,12 @@ namespace UILib{
     }
     
     void DrawItem(UI_Item ui_item){
-        Utils::Collider left_side = {{(Utils::kWindowWidth*0.5f)- 50 - (Utils::kBaseFontSize*14), 200}, {(Utils::kWindowWidth*0.5f)-50, 250}};
-        Utils::Collider aux;
-
         switch (ui_item.item_type){
             case UILib::ItemType::BUTTON:
                 UILib::DrawButton(ui_item.item.btn_item);
             break;
             case UILib::ItemType::TEXT_INPUT:
-                aux = ui_item.item.text_item.input_box;
-
-                //Draws Tag Text for the actual Input
-                UILib::DrawText(
-                    left_side.P2.x - (strlen(ui_item.item_name.text)*0.55*ui_item.item_name.font_size), 
-                    aux.P2.y - ((aux.P2.y - aux.P1.y) * 0.5) + (ui_item.item.text_item.input_text.font_size * 0.6f), 
-                    ui_item.item_name
-                );
-                UILib::DrawTextInput(ui_item.item.text_item);
+                UILib::DrawTextInput(ui_item.item.text_item, ui_item.item_name);
             break;
         }
     }
@@ -153,12 +142,14 @@ namespace UILib{
     //TEXT_INPUT
 
     //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
-    void InitTextInput(UILib::TextInput *ti, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text ti_text, bool is_visible){
+    void InitTextInput(UILib::TextInput *ti, Utils::Collider tag_box, Utils::Collider input_box, Utils::Color border_color, Utils::Color fill_color, UILib::Text ti_text, bool is_visible, bool is_tag_v, bool is_number_only, int max_length){
         //The char memory block has 1 extra space for the blinking effect to work when selected 
-        ti_text.text = (char*) malloc(sizeof(char) * (kMaxTextLength+1));
+        ti_text.text = (char*) malloc(sizeof(char) * (max_length+1));
+        *(ti_text.text) = '\0'; 
         
         *ti = {
-            coll,
+            tag_box,
+            input_box,
             border_color,
             fill_color,
             ti_text,
@@ -166,24 +157,51 @@ namespace UILib{
             false,
             0.0f,
             nullptr,
-            false
+            false,
+            is_tag_v,
+            is_number_only,
+            max_length
         };
 
-        ti->pointer = (char*) malloc(sizeof(char) * (kMaxTextLength+2));
+        ti->pointer = (char*) malloc(sizeof(char) * (max_length+2));
         *(ti->pointer) = '|'; 
         *(ti->pointer+1) = '\0'; 
     }
 
 
     //Given a string, manages basic input. Mainly used for TextInputs
-    bool CharInput(char *string){
+    bool CharInput(char *string, int max_length = kMaxTextLength){
         bool is_input = false;
         char input_c;
         int old_length;
 
         input_c = esat::GetNextPressedKey();
 
-        if(strlen(string) < kMaxTextLength && input_c != 0){
+        if(strlen(string) < max_length && input_c != 0){
+            old_length = strlen(string);
+            *(string+old_length) = input_c;
+            *(string+old_length+1) = '\0';
+            is_input = true;
+        }else{
+            if(strlen(string) > 0 && esat::IsSpecialKeyDown(esat::kSpecialKey_Backspace)){
+                *(string+strlen(string)-1) = '\0';
+                is_input = true;
+            }
+        }
+
+        return is_input;
+    }
+
+    //Given a string, manages basic input limited to numbers only. Mainly used for TextInputs with only number parameter
+    bool NumberInput(char *string, int max_length = kMaxTextLength){
+        bool is_input = false;
+        char input_c;
+        int old_length;
+
+        input_c = esat::GetNextPressedKey();
+    
+
+        if(strlen(string) < max_length && input_c != 0 && input_c >= '0' && input_c <= '9'){
             old_length = strlen(string);
             *(string+old_length) = input_c;
             *(string+old_length+1) = '\0';
@@ -225,8 +243,14 @@ namespace UILib{
         if(ti->is_selected){
             ti->border_color.a = 255;
 
-            if(CharInput(ti->input_text.text)){
-                UpdateTextInputPointer(ti);
+            if(ti->is_number_only){
+                if(NumberInput(ti->input_text.text, ti->max_length)){
+                    UpdateTextInputPointer(ti);
+                }
+            }else{
+                if(CharInput(ti->input_text.text, ti->max_length)){
+                    UpdateTextInputPointer(ti);
+                }
             }
 
             BlinkPointer(ti);
@@ -236,8 +260,18 @@ namespace UILib{
     }
 
     //Draws on screen the TextInput given as parameter
-    void DrawTextInput(TextInput ti){
+    void DrawTextInput(TextInput ti, Text tag){
+
         if(ti.is_visible){
+
+            //Draws Tag Text for the actual Input
+            if(ti.is_tag_v){
+                UILib::DrawText(
+                    ti.tag_box.P1.x, 
+                    ti.tag_box.P2.y, 
+                    tag
+                );
+            }
 
             Utils::DrawCollider(ti.input_box, ti.border_color, ti.fill_color);
 

@@ -55,13 +55,6 @@ namespace Utils{
         );
     }
 
-    void DrawIntText(float x, float y, int value){
-        char* text = (char*) malloc(sizeof(char)*3);
-        text = itoa(value,text,10);
-        esat::DrawText(x, y, text);
-        free(text);
-    }
-
     void DrawCollider(Collider c, Color border_color, Color fill_color){
         //Generates draw coords and draws de button collider with the button values
         JMATH::Vec2 *draw_coords = (JMATH::Vec2*) malloc(sizeof(JMATH::Vec2) * 5);

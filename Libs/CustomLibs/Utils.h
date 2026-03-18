@@ -47,8 +47,6 @@ namespace Utils{
     //Detects if the mouse is inside the collider area
     bool MouseInCollider(Collider c);
 
-    void DrawIntText(float x, float y, int value);
-
     void DrawCollider(Collider c, Color border_color, Color fill_color);
 }
 
