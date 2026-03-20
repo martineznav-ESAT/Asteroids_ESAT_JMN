@@ -109,6 +109,7 @@ namespace UILib{
             //OnHover
             b->border_color.a = 255;
             b->fill_color.a = 255;
+            b->button_text.color.a = 255;
             if(esat::MouseButtonDown(0)){
                 //OnClick
                 LaunchAction(b->action);
@@ -116,6 +117,7 @@ namespace UILib{
         }else{
             b->border_color.a = 200;
             b->fill_color.a = 200;
+            b->button_text.color.a = 200;
         }
     }
 
@@ -126,6 +128,7 @@ namespace UILib{
             if(button->is_selected){
                 button->border_color.a = 255;
                 button->fill_color.a = 255;
+                button->button_text.color.a = 255;
                 if(esat::IsSpecialKeyDown(esat::kSpecialKey_Enter)){
                     LaunchAction(button->action);
                 }
@@ -141,8 +144,8 @@ namespace UILib{
             //In case the button has a text, it's drawn centered to the button
             if(b.button_text.text != nullptr){
                 UILib::DrawText(
-                    b.collider.P1.x + ((b.collider.P2.x-b.collider.P1.x) * 0.5f) - (strlen(b.button_text.text) * b.button_text.font_size * 0.33 ), //Multiplied by 0.33 because it is the scale needed to be centered based con the custom font. The reasonable multiplication should be 0.5 (/2)
-                    b.collider.P2.y - ((b.collider.P2.y-b.collider.P1.y) * 0.5f) + (b.button_text.font_size*0.5f), 
+                    b.collider.P1.x + ((b.collider.P2.x-b.collider.P1.x) * 0.5f) - ((strlen(b.button_text.text) * b.button_text.font_size) / 3.5f ), //Divided by 3.5f because it is the scale needed to be centered based con the custom font. The reasonable division should be /2
+                    b.collider.P2.y - ((b.collider.P2.y-b.collider.P1.y) * 0.5f) + (b.button_text.font_size / 2.5f), 
                     b.button_text
                 );
             }

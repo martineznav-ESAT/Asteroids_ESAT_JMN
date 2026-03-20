@@ -15,6 +15,7 @@
 #include "./GameStatus.h"
 #include "./LoginMenu.h"
 #include "./RegisterMenu.h"
+#include "./MainMenu.h"
 
 namespace LoginMenu{
     //Memory block that holds all the buttons no matter if they are visible or not.
@@ -25,7 +26,7 @@ namespace LoginMenu{
 
     //ACTIONS
     void LoginAction(){
-        printf("LOGIN ACTION WIP\n");
+        MainMenu::Load();
     }
 
     void RegisterAction(){
