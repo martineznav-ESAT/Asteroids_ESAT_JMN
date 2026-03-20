@@ -84,6 +84,16 @@ namespace JMATH{
         return (vl<1.2 && vl>0.8);
     }
 
+    Vec3 Vec3Homogenize(Vec3 v){
+        if(v.z > 0){
+            v.x /= v.z;
+            v.y /= v.z;
+            v.z /= v.z;
+        }
+
+        return v;
+    }
+
     //VEC4
 
     void Vec4Print(Vec4 v){
