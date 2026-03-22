@@ -15,6 +15,7 @@
 #include "./GameManager.h"
 #include "./LoginMenu.h"
 #include "./RegisterMenu.h"
+#include "./AdminMenu.h"
 
 namespace RegisterMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
@@ -26,11 +27,16 @@ namespace RegisterMenu{
     //ACTIONS
     void SaveAction(){
         printf("SAVE ACTION WIP\n");
+        // if(prev_level == GameManager::Level::ADMIN_MENU){
+        //     AdminMenu::Load();
+        // }else{
+        //     LoginMenu::Load(GameManager::Level::REGISTER_MENU);
+        // }
     }
 
     void BackAction(){
         if(prev_level == GameManager::Level::ADMIN_MENU){
-            //TO_DO
+            AdminMenu::Load();
         }else{
             LoginMenu::Load(GameManager::Level::REGISTER_MENU);
         }
@@ -361,7 +367,7 @@ namespace RegisterMenu{
         );
     }
 
-    //Whole Login Menu initializer
+    //Whole Register Menu initializer
     void Init(){
         InitMenuItems();
         InitTextInputs();
@@ -371,7 +377,7 @@ namespace RegisterMenu{
 
     //LOGIN MENU LOAD
 
-    //Based on the level/screen you come from, the Login Menu will be loaded differently
+    //Based on the level/screen you come from, the Register Menu will be loaded differently
     void Load(GameManager::Level level_p){
         prev_level = level_p;
         GameManager::game_status.level = GameManager::Level::REGISTER_MENU;
@@ -379,7 +385,7 @@ namespace RegisterMenu{
 
     //LOGIN MENU UPDATE
 
-    //Whole Login Menu update method
+    //Whole Register Menu update method
     void Update(){
 
         //Unselect Menu item on click
@@ -415,7 +421,7 @@ namespace RegisterMenu{
         }
     }
 
-    //Whole Login Menu draw method
+    //Whole Register Menu draw method
     void Draw(){
         DrawMenuItems();
     }

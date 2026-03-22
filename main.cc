@@ -17,6 +17,7 @@
 #include "./Code/MainMenu.h"
 #include "./Code/PlayMenu.h"
 #include "./Code/HighscoresMenu.h"
+#include "./Code/AdminMenu.h"
 
 void InitGame(){
     LoginMenu::Init();
@@ -24,6 +25,7 @@ void InitGame(){
     MainMenu::Init();
     PlayMenu::Init();
     HighscoresMenu::Init();
+    AdminMenu::Init();
 }
 
 void UpdateGame(){
@@ -50,7 +52,7 @@ void UpdateGame(){
         break;
 
         case GameManager::Level::ADMIN_MENU :
-
+            AdminMenu::Update();
         break;
 
         case GameManager::Level::GAME :
@@ -83,7 +85,7 @@ void DrawGame(){
         break;
 
         case GameManager::Level::ADMIN_MENU :
-            esat::DrawClear(200,50,200);
+            AdminMenu::Draw();
         break;
 
         case GameManager::Level::GAME :
@@ -106,6 +108,7 @@ void EmptyMemory(){
     MainMenu::EmptyMemory();
     PlayMenu::EmptyMemory();
     HighscoresMenu::EmptyMemory();
+    AdminMenu::EmptyMemory();
 }
 
 void CloseFiles(){

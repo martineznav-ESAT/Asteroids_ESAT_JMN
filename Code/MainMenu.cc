@@ -16,6 +16,7 @@
 #include "./MainMenu.h"
 #include "./PlayMenu.h"
 #include "./HighscoresMenu.h"
+#include "./AdminMenu.h"
 
 namespace MainMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
@@ -37,7 +38,7 @@ namespace MainMenu{
     }
 
     void AdminAction(){
-        printf("ADMIN ACTION WIP\n");
+        AdminMenu::Load();
     }
 
     //MAIN MENU INIT

@@ -18,6 +18,7 @@ namespace UILib{
 
     enum ItemType{
         BUTTON,
+        BUTTON_PA,
         TEXT_INPUT,
         CHECKBOX
     };
@@ -37,6 +38,18 @@ namespace UILib{
         Text button_text;
         bool is_visible;
         void (*action)();
+        bool is_selected;
+    };
+
+    //UI Button structure with parametrized action
+    struct Button_PA{
+        Utils::Collider collider;
+        Utils::Color border_color;
+        Utils::Color fill_color;
+        Text button_text;
+        bool is_visible;
+        void (*action)(void *);
+        void *action_p;
         bool is_selected;
     };
 
@@ -72,6 +85,7 @@ namespace UILib{
 
     union ItemSelection{
         Button btn_item;
+        Button_PA btn_pa_item;
         TextInput text_item;
         Checkbox chk_item;
     };
@@ -101,6 +115,18 @@ namespace UILib{
         Text b_text, 
         bool is_visible,
         void (*action)()
+    );
+
+    //Given a button_pa as parameter, fills it with the rest of the parameters. Created mainly for readability
+    void InitButton(
+        Button_PA *b, 
+        Utils::Collider coll, 
+        Utils::Color border_color, 
+        Utils::Color fill_color, 
+        Text b_text, 
+        bool is_visible,
+        void (*action)(void*),
+        void *action_param
     );
     
     //Given a button, it gets checked to manage workability

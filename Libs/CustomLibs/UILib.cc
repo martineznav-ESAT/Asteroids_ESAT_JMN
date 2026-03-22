@@ -102,6 +102,21 @@ namespace UILib{
         };
     }
 
+    //TO_DO
+    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
+    // void InitButton(UILib::Button *b, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text b_text, bool is_visible, void (*action)(void *), void * action_p){
+    //     *b = {
+    //         coll,
+    //         border_color,
+    //         fill_color,
+    //         b_text,
+    //         is_visible,
+    //         action,
+    //         action_p
+    //         false
+    //     };
+    // }
+
     //Changes button color in case the mouse is hovering on it
     //and grants acces to click the button if that's the case
     void OnButtonHover(Button *b){
