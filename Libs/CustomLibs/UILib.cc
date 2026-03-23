@@ -26,6 +26,27 @@ namespace UILib{
         };
     }
 
+    //Checks if the item is visible or not looking on the value based on its type
+    bool IsItemVisible(UILib::UI_Item item){
+        bool is_visible = false;
+        switch(item.item_type){
+            case UILib::BUTTON:
+                is_visible = !item.item.btn_item.is_visible;
+            break;
+            case UILib::BUTTON_PA:
+                is_visible = !item.item.btn_pa_item.is_visible;
+            break;
+            case UILib::TEXT_INPUT:
+                is_visible = !item.item.text_item.is_visible;
+            break;
+            case UILib::CHECKBOX:
+                is_visible = !item.item.chk_item.is_visible;
+            break;
+        }
+
+        return is_visible;
+    }
+
     //Updates the item based on its type, its item index and which is the one actually selected
     void UpdateItem(UI_Item *ui_item, int *selected_i, int item_index){
 
@@ -66,6 +87,9 @@ namespace UILib{
             case UILib::ItemType::BUTTON:
                 UILib::DrawButton(ui_item.item.btn_item);
             break;
+            case UILib::ItemType::BUTTON_PA:
+                UILib::DrawButtonPA(ui_item.item.btn_pa_item);
+            break;
             case UILib::ItemType::TEXT_INPUT:
                 UILib::DrawTextInput(ui_item.item.text_item, ui_item.item_name);
             break;
@@ -103,19 +127,19 @@ namespace UILib{
     }
 
     //TO_DO
-    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
-    // void InitButton(UILib::Button *b, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text b_text, bool is_visible, void (*action)(void *), void * action_p){
-    //     *b = {
-    //         coll,
-    //         border_color,
-    //         fill_color,
-    //         b_text,
-    //         is_visible,
-    //         action,
-    //         action_p
-    //         false
-    //     };
-    // }
+    // Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
+    void InitButtonPA(UILib::Button_PA *b, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text b_text, bool is_visible, void (*action)(void *), void * action_p){
+        *b = {
+            coll,
+            border_color,
+            fill_color,
+            b_text,
+            is_visible,
+            action,
+            action_p,
+            false
+        };
+    }
 
     //Changes button color in case the mouse is hovering on it
     //and grants acces to click the button if that's the case
@@ -153,6 +177,22 @@ namespace UILib{
 
     //Draws on screen the button given as parameter
     void DrawButton(Button b){
+        if(b.is_visible){
+            Utils::DrawCollider(b.collider, b.border_color, b.fill_color);
+
+            //In case the button has a text, it's drawn centered to the button
+            if(b.button_text.text != nullptr){
+                UILib::DrawText(
+                    b.collider.P1.x + ((b.collider.P2.x-b.collider.P1.x) * 0.5f) - ((strlen(b.button_text.text) * b.button_text.font_size) / 3.5f ), //Divided by 3.5f because it is the scale needed to be centered based con the custom font. The reasonable division should be /2
+                    b.collider.P2.y - ((b.collider.P2.y-b.collider.P1.y) * 0.5f) + (b.button_text.font_size / 2.5f), 
+                    b.button_text
+                );
+            }
+        }
+    }
+
+    //Draws on screen the button_pa given as parameter
+    void DrawButtonPA(Button_PA b){
         if(b.is_visible){
             Utils::DrawCollider(b.collider, b.border_color, b.fill_color);
 

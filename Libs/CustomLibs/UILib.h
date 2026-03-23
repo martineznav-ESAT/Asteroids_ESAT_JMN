@@ -99,6 +99,8 @@ namespace UILib{
 
     void InitItem(UI_Item *ui_item, ItemType it, Text name);
 
+    bool IsItemVisible(UILib::UI_Item item);
+    
     void UpdateItem(UI_Item *ui_item, int *selected_i, int item_index);
     
     void DrawItem(UI_Item ui_item);
@@ -118,7 +120,7 @@ namespace UILib{
     );
 
     //Given a button_pa as parameter, fills it with the rest of the parameters. Created mainly for readability
-    void InitButton(
+    void InitButtonPA(
         Button_PA *b, 
         Utils::Collider coll, 
         Utils::Color border_color, 
@@ -134,6 +136,7 @@ namespace UILib{
 
     //Draws on screen the button given as parameter
     void DrawButton(Button b);
+    void DrawButtonPA(Button_PA b);
 
     //Given a TextInput as parameter, fills it with the rest of the parameters. Created mainly for readability
     void InitTextInput(

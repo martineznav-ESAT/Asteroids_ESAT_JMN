@@ -22,20 +22,33 @@ namespace AdminMenu{
     UILib::UI_Item *menu_items = nullptr;
     int selected_item = -1;
     int user_page = 0;
+    bool is_last_page = false;
 
     UserManager::User *page_users = nullptr;
 
     //ACTIONS
+    void EditAction(void *u){
+        // printf("EDIT ACTION %s WIP\n",u->name);
+    }
+
+    void DeleteAction(void *u){
+        // printf("DELETE ACTION %s WIP\n",u->name);
+    }
+
+    void PrevPageAction(){
+        user_page--;
+        printf("PREV_PAGE ACTION %d WIP\n",user_page);
+    }
+
+    void NextPageAction(){
+        //TO_DO Comprobar si hay mas usuarios
+        user_page++;
+        is_last_page = user_page >= 3;
+        printf("NEXT_PAGE ACTION %d WIP\n",user_page);
+    }
+
     void CreateAction(){
         RegisterMenu::Load(GameManager::Level::ADMIN_MENU);
-    }
-
-    void EditAction(UserManager::User *u){
-        printf("EDIT ACTION %s WIP",u->name);
-    }
-
-    void DeleteAction(UserManager::User *u){
-        printf("DELETE ACTION %s WIP",u->name);
     }
     
     void BackAction(){
@@ -47,6 +60,92 @@ namespace AdminMenu{
     //Initializes all menu buttons
     void InitButtons(){
         Utils::Color text_color = {255,255,255,255};
+
+        JMATH::Vec2 base_button_coord = {
+            (Utils::kWindowWidth) - (strlen("EDIT DELETE  ") * ((float)Utils::kBaseFontSize)),
+            115
+        };
+
+        JMATH::Vec2 button_height = {0,25};
+        JMATH::Vec2 margin_v = {0,17.5f};
+        JMATH::Vec2 edit_width = {(strlen("EDIT")*(float)Utils::kBaseFontSize),0};
+        JMATH::Vec2 delete_width_1 = {(strlen("EDIT ")*(float)Utils::kBaseFontSize),0};
+        JMATH::Vec2 delete_width_2 = {(strlen("EDIT DELETE")*(float)Utils::kBaseFontSize),0};
+
+        //USER MANAGEMENT BUTTONS
+        for(int i = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
+            if(i%2 == 0){
+                UILib::InitButtonPA(
+                    &((menu_items+i)->item.btn_pa_item),
+                    {
+                        JMATH::Vec2Sum(base_button_coord, JMATH::Vec2Scale(margin_v,i)),
+                        JMATH::Vec2Sum(base_button_coord, JMATH::Vec2Sum(button_height,JMATH::Vec2Sum(edit_width, JMATH::Vec2Scale(margin_v,i)))),
+                    },
+                    {100,100,100,200},
+                    {100,100,100,200},
+                    {
+                        text_color,
+                        (menu_items+i)->item_name.text,
+                        (float)Utils::kBaseFontSize
+                    },
+                    true,
+                    EditAction,
+                    (page_users+i)
+                );
+            }else{
+                UILib::InitButtonPA(
+                    &((menu_items+i)->item.btn_pa_item),
+                    {
+                        JMATH::Vec2Sum(base_button_coord, JMATH::Vec2Sum(delete_width_1, JMATH::Vec2Scale(margin_v,i-1))),
+                        JMATH::Vec2Sum(base_button_coord, JMATH::Vec2Sum(button_height,JMATH::Vec2Sum(delete_width_2, JMATH::Vec2Scale(margin_v,i-1)))),
+                    },
+                    {100,100,100,200},
+                    {100,100,100,200},
+                    {
+                        text_color,
+                        (menu_items+i)->item_name.text,
+                        (float)Utils::kBaseFontSize
+                    },
+                    true,
+                    DeleteAction,
+                    (page_users+i)
+                );
+            }
+        }
+
+        UILib::InitButton(
+            &((menu_items+((int)AdminMenuItems::PREV_PAG_BTN))->item.btn_item),
+            {
+                {30.0f, Utils::kWindowHeight-140.0f},
+                {80.0f, Utils::kWindowHeight-90.0f}
+            },
+            {100,100,100,200},
+            {100,100,100,200},
+            {
+                text_color,
+                (menu_items+((int)AdminMenuItems::PREV_PAG_BTN))->item_name.text,
+                (float)Utils::kBaseFontSize
+            },
+            true,
+            PrevPageAction
+        );
+
+        UILib::InitButton(
+            &((menu_items+((int)AdminMenuItems::NEXT_PAG_BTN))->item.btn_item),
+            {
+                {Utils::kWindowWidth-80.0f, Utils::kWindowHeight-140.0f},
+                {Utils::kWindowWidth-30.0f, Utils::kWindowHeight-90.0f}
+            },
+            {100,100,100,200},
+            {100,100,100,200},
+            {
+                text_color,
+                (menu_items+((int)AdminMenuItems::NEXT_PAG_BTN))->item_name.text,
+                (float)Utils::kBaseFontSize
+            },
+            true,
+            NextPageAction
+        );
 
         UILib::InitButton(
             &((menu_items+((int)AdminMenuItems::CREATE_BTN))->item.btn_item),
@@ -91,6 +190,35 @@ namespace AdminMenu{
         // text_inputs = (UILib::TextInput*) malloc(sizeof(UILib::TextInput)*(int)AdminMenuItems::TOTAL_ITEMS);
         menu_items = (UILib::UI_Item*) malloc(sizeof(UILib::UI_Item)*(int)AdminMenuItems::TOTAL_ITEMS);
 
+        //USER MANAGEMENT BUTTONS
+        for(int i = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
+            if(i%2 == 0){
+                UILib::InitItem(
+                    (menu_items + i),
+                    UILib::ItemType::BUTTON_PA,
+                    {{255,255,255,255},"EDIT", (float)Utils::kBaseFontSize}
+                );
+            }else{
+                UILib::InitItem(
+                    (menu_items + i),
+                    UILib::ItemType::BUTTON_PA,
+                    {{255,255,255,255},"DELETE", (float)Utils::kBaseFontSize}
+                );
+            }
+        }
+
+        UILib::InitItem(
+            (menu_items + ((int)AdminMenuItems::PREV_PAG_BTN)),
+            UILib::ItemType::BUTTON,
+            {{255,255,255,255},"<", Utils::kBaseFontSize*2.0f}
+        );
+
+        UILib::InitItem(
+            (menu_items + ((int)AdminMenuItems::NEXT_PAG_BTN)),
+            UILib::ItemType::BUTTON,
+            {{255,255,255,255},">", Utils::kBaseFontSize*2.0f}
+        );
+
         UILib::InitItem(
             (menu_items + ((int)AdminMenuItems::CREATE_BTN)),
             UILib::ItemType::BUTTON,
@@ -107,8 +235,20 @@ namespace AdminMenu{
     void LoadUserPage(int page = 0){
         //TO_DO LOAD REAL USERS
 
-        for(int i = 0; i < 10; i++){
-
+        for(unsigned char i = 0; i < 10; i++){
+            *(page_users+i) = {
+                "USERNAME",
+                "P",
+                "AA",
+                "EMAIL@MAIL.COM",
+                "NAME_",
+                "SURNAME_",
+                //dob,
+                "SPAIN",
+                "VALENCIA",
+                i,
+                false
+            };
         }
     }
 
@@ -146,18 +286,36 @@ namespace AdminMenu{
 
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
-            if(selected_item <= 0){
-                selected_item = ((int)AdminMenuItems::TOTAL_ITEMS) - 1;
-            }else{
-                selected_item--;
-            }
+            do{
+                if(selected_item <= 0){
+                    selected_item = ((int)AdminMenuItems::TOTAL_ITEMS) - 1;
+                }else{
+                    selected_item--;
+                }
+            }while(UILib::IsItemVisible(*(menu_items+selected_item)));
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
-            ++selected_item %= (int)AdminMenuItems::TOTAL_ITEMS;
+            do{
+                ++selected_item %= (int)AdminMenuItems::TOTAL_ITEMS;
+            }while(UILib::IsItemVisible(*(menu_items+selected_item)));
         }
         
         for(int i = 0; i < (int)AdminMenuItems::TOTAL_ITEMS; i++){
-            UILib::UpdateItem(menu_items+i, &selected_item, i);
+            switch((AdminMenuItems)i){
+                case AdminMenuItems::PREV_PAG_BTN:
+                    if(user_page > 0){
+                        UILib::UpdateItem(menu_items+i, &selected_item, i);
+                    }
+                break;
+                case AdminMenuItems::NEXT_PAG_BTN:
+                    if(!is_last_page){
+                        UILib::UpdateItem(menu_items+i, &selected_item, i);
+                    }
+                break;
+                default:
+                    UILib::UpdateItem(menu_items+i, &selected_item, i);
+                break;
+            }
         }
     }
 
@@ -183,15 +341,23 @@ namespace AdminMenu{
             coord, 
             {
                 {255,255,255,255},
-                "USERNAME",
+                "AAAAAZZZZZAAAAAZZZZZ",
                 {(float)Utils::kBaseFontSize}
             }
         );
         UILib::DrawText(
-            JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("USERNAME "),0}), 
+            JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("USERNAME       "),0}), 
             {
                 {255,255,255,255},
-                "AAAAAZZZZZ",
+                "AZA",
+                {(float)Utils::kBaseFontSize}
+            }
+        );
+        UILib::DrawText(
+            JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("USERNAME       ALIAS "),0}), 
+            {
+                {255,255,255,255},
+                "99",
                 {(float)Utils::kBaseFontSize}
             }
         );
@@ -200,19 +366,45 @@ namespace AdminMenu{
     void DrawUserList(){
         JMATH::Vec2 base_coord = {
             (Utils::kWindowWidth*0.5f) - 
-            (strlen("USERNAME AAAAAZZZZZ        EDIT DELETE") * 0.45f * ((float)Utils::kBaseFontSize)),
+            (strlen("USERNAME       ALIAS CREDITS EDIT DELETE") * 0.45f * ((float)Utils::kBaseFontSize)),
             100
         };
-        JMATH::Vec2 margin_v = {0,45};
+        JMATH::Vec2 margin_v = {0,35};
 
-        for(int i = 0; i < 10; i++){
+        UILib::DrawText(
+            base_coord,
+            {
+                {255,255,255,255},
+                "USERNAME               ALIAS   CREDITS",
+                {(float)Utils::kBaseFontSize}
+            }
+        );
+
+        //Starts with 1 to apply margin from the beghining
+        for(int i = 1; i < 11; i++){
             DrawUserItem(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)));
         }
     }
 
     void DrawMenuItems(){
         for(int i = 0; i < (int)AdminMenuItems::TOTAL_ITEMS; i++){
-            UILib::DrawItem(*(menu_items+i+user_page));
+            switch((AdminMenuItems)i){
+                case AdminMenuItems::PREV_PAG_BTN:
+                    if(user_page <= 0){
+                        (menu_items+i)->item.btn_item.is_visible = false;
+                    }else{
+                        (menu_items+i)->item.btn_item.is_visible = true;
+                    }
+                break;
+                case AdminMenuItems::NEXT_PAG_BTN:
+                    if(is_last_page){
+                        (menu_items+i)->item.btn_item.is_visible = false;
+                    }else{
+                        (menu_items+i)->item.btn_item.is_visible = true;
+                    }
+                break;
+            }
+            UILib::DrawItem(*(menu_items+i));
         }
     }
 
