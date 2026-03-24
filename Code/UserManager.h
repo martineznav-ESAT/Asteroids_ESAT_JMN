@@ -22,17 +22,20 @@ namespace UserManager{
     struct User{
         char* username = nullptr;
         char* password = nullptr;
-        char* alias = "AAA";
+        char* alias = nullptr;
         char* email = nullptr;
         char* name = nullptr;
         char* surname = nullptr;
         // date dob;
-        char* country;
-        char* province;
+        char* country = nullptr;
+        char* province = nullptr;
         unsigned char credits = 3;
-        bool is_admin;
+        bool is_admin = false;
     };
 
+    bool LoadRegisteredUsers();
+
+    void CloseFiles();
 }
 
 #endif

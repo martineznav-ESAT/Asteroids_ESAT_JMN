@@ -27,11 +27,11 @@ namespace RegisterMenu{
     //ACTIONS
     void SaveAction(){
         printf("SAVE ACTION WIP\n");
-        // if(prev_level == GameManager::Level::ADMIN_MENU){
-        //     AdminMenu::Load();
-        // }else{
-        //     LoginMenu::Load(GameManager::Level::REGISTER_MENU);
-        // }
+        if(prev_level == GameManager::Level::ADMIN_MENU){
+            // AdminMenu::Load();
+        }else{
+            // LoginMenu::Load(GameManager::Level::REGISTER_MENU);
+        }
     }
 
     void BackAction(){
@@ -74,6 +74,8 @@ namespace RegisterMenu{
             true,
             SaveAction
         );
+
+        printf("%d\n",prev_level);
 
         UILib::InitButton(
             &((menu_items+((int)RegisterItems::BACK_BTN))->item.btn_item),
@@ -381,6 +383,14 @@ namespace RegisterMenu{
     void Load(GameManager::Level level_p){
         prev_level = level_p;
         GameManager::game_status.level = GameManager::Level::REGISTER_MENU;
+
+        if(prev_level == GameManager::Level::REGISTER_MENU){
+            (menu_items+((int)RegisterItems::ADMIN_CHK))->item.chk_item.is_checked = true;
+            (menu_items+((int)RegisterItems::BACK_BTN))->item.btn_item.is_visible = false;
+        }else{
+            (menu_items+((int)RegisterItems::ADMIN_CHK))->item.chk_item.is_checked = false;
+            (menu_items+((int)RegisterItems::BACK_BTN))->item.btn_item.is_visible = true;
+        }
     }
 
     //LOGIN MENU UPDATE

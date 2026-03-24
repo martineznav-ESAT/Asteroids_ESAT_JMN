@@ -26,6 +26,13 @@ void InitGame(){
     PlayMenu::Init();
     HighscoresMenu::Init();
     AdminMenu::Init();
+
+    if (UserManager::LoadRegisteredUsers()){
+        LoginMenu::Load(GameManager::Level::LOGIN_MENU);
+    }else{
+        RegisterMenu::Load(GameManager::Level::REGISTER_MENU);
+    }
+    
 }
 
 void UpdateGame(){
@@ -112,7 +119,7 @@ void EmptyMemory(){
 }
 
 void CloseFiles(){
-    
+    UserManager::CloseFiles();
 }
 
 int esat::main(int argc, char **argv) {
