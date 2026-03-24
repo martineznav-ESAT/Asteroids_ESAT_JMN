@@ -59,6 +59,14 @@ namespace UILib{
                 }
                 UILib::UpdateButton(&(ui_item->item.btn_item));
             break;
+            case UILib::ItemType::BUTTON_PA:
+                if(*selected_i == item_index){
+                    ui_item->item.btn_pa_item.is_selected = true;
+                }else{
+                    ui_item->item.btn_pa_item.is_selected = false;
+                }
+                UILib::UpdateButtonPA(&(ui_item->item.btn_pa_item));
+            break;
             case UILib::ItemType::TEXT_INPUT:
                 if(Utils::MouseInCollider(ui_item->item.text_item.input_box) && esat::MouseButtonDown(0)){
                     *selected_i = item_index;
@@ -112,6 +120,14 @@ namespace UILib{
         }
     }
 
+    void LaunchActionPA(void (*action)(void *), void* action_pa){
+        if(action != nullptr){
+            action(action_pa);
+        }else{
+            printf("Action WIP\n");
+        }
+    }
+
 
     //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
     void InitButton(UILib::Button *b, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text b_text, bool is_visible, void (*action)()){
@@ -160,6 +176,23 @@ namespace UILib{
         }
     }
 
+    void OnButtonHover(Button_PA *b){
+        if(b->is_visible && Utils::MouseInCollider(b->collider)){
+            //OnHover
+            b->border_color.a = 255;
+            b->fill_color.a = 255;
+            b->button_text.color.a = 255;
+            if(esat::MouseButtonDown(0)){
+                //OnClick
+                LaunchActionPA(b->action, b->action_p);
+            }
+        }else{
+            b->border_color.a = 200;
+            b->fill_color.a = 200;
+            b->button_text.color.a = 200;
+        }
+    }
+
     //Given a button, it gets checked to manage workability
     void UpdateButton(Button *button){
         if(button->is_visible){
@@ -170,6 +203,20 @@ namespace UILib{
                 button->button_text.color.a = 255;
                 if(esat::IsSpecialKeyDown(esat::kSpecialKey_Enter)){
                     LaunchAction(button->action);
+                }
+            }
+        }
+    }
+
+    void UpdateButtonPA(Button_PA *button){
+        if(button->is_visible){
+            OnButtonHover(button);
+            if(button->is_selected){
+                button->border_color.a = 255;
+                button->fill_color.a = 255;
+                button->button_text.color.a = 255;
+                if(esat::IsSpecialKeyDown(esat::kSpecialKey_Enter)){
+                    LaunchActionPA(button->action, button->action_p);
                 }
             }
         }
@@ -390,7 +437,7 @@ namespace UILib{
     void DrawIntToText(JMATH::Vec2 position, Text text, int value, int value_max_length, bool fill_left){
         text.text = (char*) malloc(sizeof(char)*(value_max_length+1));
         if(fill_left){
-            snprintf(text.text, value_max_length+1, "%0*d", (value_max_length+1), value);
+            snprintf(text.text, value_max_length+1, "%0*d", value_max_length, value);
         }else{
             text.text = itoa(value,text.text,10);
         }

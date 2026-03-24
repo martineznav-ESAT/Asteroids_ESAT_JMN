@@ -20,6 +20,7 @@ namespace PlayMenu{
     enum PlayMenuItems{
         SINGLEPLAYER_BTN,
         MULTIPLAYER_BTN,
+        BACK_BTN,
         TOTAL_ITEMS
     };
 

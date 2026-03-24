@@ -15,6 +15,7 @@
 #include "./GameManager.h"
 #include "./PlayMenu.h"
 #include "./LoginMenu.h"
+#include "./MainMenu.h"
 
 namespace PlayMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
@@ -31,12 +32,16 @@ namespace PlayMenu{
         LoginMenu::Load(GameManager::Level::PLAY_MENU);
     }
 
+    void BackAction(){
+        MainMenu::Load();
+    }
+
     //PLAY MENU INIT
 
     //Initializes all menu buttons
     void InitButtons(){
         JMATH::Vec2 centered_coord = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f};
-        JMATH::Vec2 margin_y = {0.0f, 50.0f};
+        JMATH::Vec2 margin_y = {0.0f, 70.0f};
 
         Utils::Collider base_collider = {{centered_coord.x, centered_coord.y-(float)Utils::kBaseFontSize},{centered_coord.x, (centered_coord.y+(float)Utils::kBaseFontSize)}};
 
@@ -70,14 +75,8 @@ namespace PlayMenu{
         UILib::InitButton(
             &((menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item.btn_item),
             {
-                JMATH::Vec2Sum(
-                    {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
-                    margin_y
-                ),
-                JMATH::Vec2Sum(
-                    {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
-                    margin_y
-                )
+                {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
+                {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
             },
             button_color,
             button_color,
@@ -90,6 +89,28 @@ namespace PlayMenu{
             MultiPlayerAction
         );
 
+        UILib::InitButton(
+            &((menu_items+((int)PlayMenuItems::BACK_BTN))->item.btn_item),
+            {
+                JMATH::Vec2Sum(
+                    {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::BACK_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
+                    margin_y
+                ),
+                JMATH::Vec2Sum(
+                    {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::BACK_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
+                    margin_y
+                )
+            },
+            button_color,
+            button_color,
+            {
+                text_color,
+                (menu_items+((int)PlayMenuItems::BACK_BTN))->item_name.text,
+                (float)Utils::kBaseFontSize*2
+            },
+            true,
+            BackAction
+        );
     }
 
 
@@ -108,6 +129,11 @@ namespace PlayMenu{
             (menu_items + ((int)PlayMenuItems::MULTIPLAYER_BTN)),
             UILib::ItemType::BUTTON,
             {{255,255,255,255},"MULTIPLAYER", Utils::kBaseFontSize*2.0f}
+        );
+        UILib::InitItem(
+            (menu_items + ((int)PlayMenuItems::BACK_BTN)),
+            UILib::ItemType::BUTTON,
+            {{255,255,255,255},"BACK", Utils::kBaseFontSize*2.0f}
         );
     }
 

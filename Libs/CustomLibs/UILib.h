@@ -133,6 +133,7 @@ namespace UILib{
     
     //Given a button, it gets checked to manage workability
     void UpdateButton(Button *button);
+    void UpdateButtonPA(Button_PA *button);
 
     //Draws on screen the button given as parameter
     void DrawButton(Button b);
@@ -162,12 +163,10 @@ namespace UILib{
     void DrawText(float x, float y, Text text);
     void DrawText(JMATH::Vec2 position, Text text);
 
-    void DrawIntToText(float x, float y, Text text, int value, int value_max_length, bool fill_left);
-    void DrawIntToText(JMATH::Vec2 position, Text text, int value, int value_max_length, bool fill_left);
-
     //Given an int value, it will draw it 
     //on screen as a text 
-    void DrawIntText(float x, float y, int value);
+    void DrawIntToText(float x, float y, Text text, int value, int value_max_length, bool fill_left);
+    void DrawIntToText(JMATH::Vec2 position, Text text, int value, int value_max_length, bool fill_left);
 
     //Given a Checkbox as parameter, fills it with the rest of the parameters. Created mainly for readability
     void InitCheckbox(

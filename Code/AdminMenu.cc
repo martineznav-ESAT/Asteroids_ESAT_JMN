@@ -28,15 +28,16 @@ namespace AdminMenu{
 
     //ACTIONS
     void EditAction(void *u){
-        // printf("EDIT ACTION %s WIP\n",u->name);
+        printf("EDIT ACTION %d WIP\n",((UserManager::User*)u)->credits);
     }
 
     void DeleteAction(void *u){
-        // printf("DELETE ACTION %s WIP\n",u->name);
+        printf("DELETE ACTION %d WIP\n",((UserManager::User*)u)->credits);
     }
 
     void PrevPageAction(){
         user_page--;
+        is_last_page = user_page >= 3;
         printf("PREV_PAGE ACTION %d WIP\n",user_page);
     }
 
@@ -73,7 +74,7 @@ namespace AdminMenu{
         JMATH::Vec2 delete_width_2 = {(strlen("EDIT DELETE")*(float)Utils::kBaseFontSize),0};
 
         //USER MANAGEMENT BUTTONS
-        for(int i = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
+        for(int i = 0, u = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
             if(i%2 == 0){
                 UILib::InitButtonPA(
                     &((menu_items+i)->item.btn_pa_item),
@@ -90,7 +91,7 @@ namespace AdminMenu{
                     },
                     true,
                     EditAction,
-                    (page_users+i)
+                    (page_users+u)
                 );
             }else{
                 UILib::InitButtonPA(
@@ -108,8 +109,10 @@ namespace AdminMenu{
                     },
                     true,
                     DeleteAction,
-                    (page_users+i)
+                    (page_users+u)
                 );
+
+                u++;
             }
         }
 
@@ -336,12 +339,12 @@ namespace AdminMenu{
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
-    void DrawUserItem(JMATH::Vec2 coord){
+    void DrawUserItem(JMATH::Vec2 coord, UserManager::User user){
         UILib::DrawText(
             coord, 
             {
                 {255,255,255,255},
-                "AAAAAZZZZZAAAAAZZZZZ",
+                user.username,
                 {(float)Utils::kBaseFontSize}
             }
         );
@@ -349,17 +352,19 @@ namespace AdminMenu{
             JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("USERNAME       "),0}), 
             {
                 {255,255,255,255},
-                "AZA",
+                user.alias,
                 {(float)Utils::kBaseFontSize}
             }
         );
-        UILib::DrawText(
+
+        UILib::DrawIntToText(
             JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("USERNAME       ALIAS "),0}), 
             {
                 {255,255,255,255},
-                "99",
+                nullptr,
                 {(float)Utils::kBaseFontSize}
-            }
+            },
+            ((int)user.credits),2,true
         );
     }
 
@@ -381,8 +386,8 @@ namespace AdminMenu{
         );
 
         //Starts with 1 to apply margin from the beghining
-        for(int i = 1; i < 11; i++){
-            DrawUserItem(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)));
+        for(int i = 0; i < 10; i++){
+            DrawUserItem(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i+1)), *(page_users+i));
         }
     }
 
