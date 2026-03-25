@@ -26,7 +26,9 @@ namespace UserManager{
         char* email = nullptr;
         char* name = nullptr;
         char* surname = nullptr;
-        // date dob;
+        int day_dob;
+        int month_dob;
+        int year_dob;
         char* country = nullptr;
         char* province = nullptr;
         unsigned char credits = 3;

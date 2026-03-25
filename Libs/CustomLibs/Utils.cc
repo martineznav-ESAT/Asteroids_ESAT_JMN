@@ -12,7 +12,8 @@
 
 namespace Utils{
     const unsigned char kFPS = 60;
-    const int kWindowWidth = 800, kWindowHeight = 608;
+    // const int kWindowWidth = 800, kWindowHeight = 608;
+    const int kWindowWidth = 1280, kWindowHeight = 960;
     const int kBaseFontSize = 19;
 
     double current_time,last_time;

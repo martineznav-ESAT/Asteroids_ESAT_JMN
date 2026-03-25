@@ -246,7 +246,7 @@ namespace AdminMenu{
                 "EMAIL@MAIL.COM",
                 "NAME_",
                 "SURNAME_",
-                //dob,
+                22,01,2003,
                 "SPAIN",
                 "VALENCIA",
                 i,

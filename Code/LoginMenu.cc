@@ -57,7 +57,7 @@ namespace LoginMenu{
 
     //Initializes all menu buttons
     void InitButtons(){
-        JMATH::Vec2 centered_bottom_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight-50.0f};
+        JMATH::Vec2 centered_bottom_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight-100.0f};
         Utils::Collider left_button = 
         {
             {centered_bottom_coords.x-150-50, centered_bottom_coords.y-50},
@@ -103,13 +103,22 @@ namespace LoginMenu{
 
     //Initializes all menu text Inputs
     void InitTextInputs(){
-        Utils::Collider first_left_side = {{(Utils::kWindowWidth*0.5f)-200, 200}, JMATH::Vec2Sub({(Utils::kWindowWidth*0.5f)-50, 250},{0.0f, (menu_items)->item_name.font_size*0.33f})};
-        Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 200}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 250}};
+        JMATH::Vec2 centered_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f};
+        JMATH::Vec2 margin_y = {0,50};
 
         UILib::InitTextInput(
             &((menu_items + ((int)LoginItems::USER_TI))->item.text_item),
-            {first_left_side.P1, first_left_side.P2},
-            first_right_side,
+            {
+                JMATH::Vec2Sub(
+                    centered_coords, 
+                    {strlen((menu_items + ((int)LoginItems::USER_TI))->item_name.text)*0.5f*Utils::kBaseFontSize,0}
+                ), 
+                JMATH::Vec2Sub(
+                    centered_coords, 
+                    JMATH::Vec2Scale(margin_y,2)
+                )
+            },
+            {centered_coords, JMATH::Vec2Sub(centered_coords, JMATH::Vec2Scale(margin_y,1))},
             {255,255,255,255},
             {0,0,0,255},
             {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
@@ -120,8 +129,8 @@ namespace LoginMenu{
 
         UILib::InitTextInput(
             &((menu_items + ((int)LoginItems::PASSWD_TI))->item.text_item),
-            {JMATH::Vec2Sum(first_left_side.P1, {0.0f, 75.0f}),JMATH::Vec2Sum(first_left_side.P2, {0.0f, 75.0f})},
-            {JMATH::Vec2Sum(first_right_side.P1, {0.0f, 75.0f}),JMATH::Vec2Sum(first_right_side.P2, {0.0f, 75.0f})},
+            {centered_coords, JMATH::Vec2Sum(centered_coords, JMATH::Vec2Scale(margin_y,1))},
+            {centered_coords, JMATH::Vec2Sum(centered_coords, JMATH::Vec2Scale(margin_y,2))},
             {255,255,255,255},
             {0,0,0,255},
             {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
