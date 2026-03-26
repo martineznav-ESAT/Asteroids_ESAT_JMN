@@ -12,10 +12,9 @@
 #include "./Utils.h"
 #include "./UILib.h"
 #include "../../Code/GameManager.h"
+#include "../../Code/UserManager.h"
 
 namespace UILib{
-    const int kMaxTextLength = 20;
-
     //UI_ITEM
     void InitItem(UI_Item* ui_item, ItemType it, Text name){
         *ui_item = {
@@ -287,7 +286,7 @@ namespace UILib{
 
 
     //Given a string, manages basic input. Mainly used for TextInputs
-    bool CharInput(char *string, int max_length = kMaxTextLength){
+    bool CharInput(char *string, int max_length = UserManager::kDefaultStrL){
         bool is_input = false;
         char input_c;
         int old_length;
@@ -310,7 +309,7 @@ namespace UILib{
     }
 
     //Given a string, manages basic input limited to numbers only. Mainly used for TextInputs with only number parameter
-    bool NumberInput(char *string, int max_length = kMaxTextLength){
+    bool NumberInput(char *string, int max_length = UserManager::kDefaultStrL){
         bool is_input = false;
         char input_c;
         int old_length;

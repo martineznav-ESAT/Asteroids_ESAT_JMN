@@ -213,13 +213,13 @@ namespace MainMenu{
         UILib::Text title = {
             {255,255,255,255},
             "ASTEROIDS",
-            Utils::kBaseFontSize*3.5f
+            Utils::kBaseFontSize*5.0f
         };
         
         esat::DrawSetTextFont("./Assets/Fonts/Neuropol.otf");
         UILib::DrawText(
-            (Utils::kWindowWidth*0.5f) - ((strlen(title.text)/2.5f)*Utils::kBaseFontSize*3.5f),
-            225, 
+            (Utils::kWindowWidth*0.5f) - ((strlen(title.text)/2.5f)*title.font_size),
+            350, 
             title
         );
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");

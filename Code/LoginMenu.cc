@@ -57,7 +57,7 @@ namespace LoginMenu{
 
     //Initializes all menu buttons
     void InitButtons(){
-        JMATH::Vec2 centered_bottom_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight-100.0f};
+        JMATH::Vec2 centered_bottom_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight-200.0f};
         Utils::Collider left_button = 
         {
             {centered_bottom_coords.x-150-50, centered_bottom_coords.y-50},
@@ -105,20 +105,49 @@ namespace LoginMenu{
     void InitTextInputs(){
         JMATH::Vec2 centered_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f};
         JMATH::Vec2 margin_y = {0,50};
+        UILib::UI_Item *aux_item = nullptr;
+        centered_coords = JMATH::Vec2Sub(centered_coords, margin_y);
+        
 
+        aux_item = (menu_items + ((int)LoginItems::USER_TI));
         UILib::InitTextInput(
-            &((menu_items + ((int)LoginItems::USER_TI))->item.text_item),
+            &(aux_item->item.text_item),
             {
+                //TagCollider P1
                 JMATH::Vec2Sub(
-                    centered_coords, 
-                    {strlen((menu_items + ((int)LoginItems::USER_TI))->item_name.text)*0.5f*Utils::kBaseFontSize,0}
+                    JMATH::Vec2Sub(
+                        centered_coords, 
+                        JMATH::Vec2Scale(margin_y,4)
+                    ), 
+                    {(strlen(aux_item->item_name.text)/3.5f)*Utils::kBaseFontSize*2,0}
                 ), 
-                JMATH::Vec2Sub(
-                    centered_coords, 
-                    JMATH::Vec2Scale(margin_y,2)
+                //TagCollider P2
+                JMATH::Vec2Sum(
+                    JMATH::Vec2Sub(
+                        centered_coords, 
+                        JMATH::Vec2Scale(margin_y,3)
+                    ), 
+                    {(strlen(aux_item->item_name.text)/3.5f)*Utils::kBaseFontSize*2,0}
                 )
             },
-            {centered_coords, JMATH::Vec2Sub(centered_coords, JMATH::Vec2Scale(margin_y,1))},
+            {
+                //InputCollider P1
+                JMATH::Vec2Sub(
+                    JMATH::Vec2Sub(
+                        centered_coords, 
+                        JMATH::Vec2Scale(margin_y,2)
+                    ), 
+                    {((UserManager::kDefaultStrL+1)/3.0f)*Utils::kBaseFontSize,0}
+                ), 
+                //InputCollider P2
+                JMATH::Vec2Sum(
+                    JMATH::Vec2Sub(
+                        centered_coords, 
+                        JMATH::Vec2Scale(margin_y,1)
+                    ), 
+                    {((UserManager::kDefaultStrL+1)/3.0f)*Utils::kBaseFontSize,0}
+                )
+            },
             {255,255,255,255},
             {0,0,0,255},
             {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
@@ -127,10 +156,45 @@ namespace LoginMenu{
             false
         );
 
+        aux_item = (menu_items + ((int)LoginItems::PASSWD_TI));
         UILib::InitTextInput(
-            &((menu_items + ((int)LoginItems::PASSWD_TI))->item.text_item),
-            {centered_coords, JMATH::Vec2Sum(centered_coords, JMATH::Vec2Scale(margin_y,1))},
-            {centered_coords, JMATH::Vec2Sum(centered_coords, JMATH::Vec2Scale(margin_y,2))},
+            &(aux_item->item.text_item),
+            {
+                //TagCollider P1
+                JMATH::Vec2Sub(
+                    JMATH::Vec2Sum(
+                        centered_coords, 
+                        JMATH::Vec2Scale(margin_y,0)
+                    ), 
+                    {(strlen(aux_item->item_name.text)/3.5f)*Utils::kBaseFontSize*2,0}
+                ), 
+                //TagCollider P2
+                JMATH::Vec2Sum(
+                    JMATH::Vec2Sum(
+                        centered_coords, 
+                        JMATH::Vec2Scale(margin_y,1)
+                    ), 
+                    {(strlen(aux_item->item_name.text)/3.5f)*Utils::kBaseFontSize*2,0}
+                )
+            },
+            {
+                //InputCollider P1
+                JMATH::Vec2Sub(
+                    JMATH::Vec2Sum(
+                        centered_coords, 
+                        JMATH::Vec2Scale(margin_y,2)
+                    ), 
+                    {((UserManager::kDefaultStrL+1)/3.0f)*Utils::kBaseFontSize,0}
+                ), 
+                //InputCollider P2
+                JMATH::Vec2Sum(
+                    JMATH::Vec2Sum(
+                        centered_coords, 
+                        JMATH::Vec2Scale(margin_y,3)
+                    ), 
+                    {((UserManager::kDefaultStrL+1)/3.0f)*Utils::kBaseFontSize,0}
+                )
+            },
             {255,255,255,255},
             {0,0,0,255},
             {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},

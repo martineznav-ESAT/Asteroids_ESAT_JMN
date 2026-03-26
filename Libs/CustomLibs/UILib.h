@@ -9,13 +9,12 @@
 #include <math.h>
 
 #include "./Utils.h"
+#include "../../Code/UserManager.h"
 
 #ifndef UILib_H
 #define UILib_H
 
 namespace UILib{
-    extern const int kMaxTextLength;
-
     enum ItemType{
         BUTTON,
         BUTTON_PA,
@@ -150,7 +149,7 @@ namespace UILib{
         bool is_visible, 
         bool is_tag_v, 
         bool is_number_only, 
-        int max_length = kMaxTextLength
+        int max_length = UserManager::kDefaultStrL
     );
 
     //Given a TextInput, it gets checked to manage workability

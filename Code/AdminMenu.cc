@@ -240,12 +240,12 @@ namespace AdminMenu{
 
         for(unsigned char i = 0; i < 10; i++){
             *(page_users+i) = {
-                "USERNAME",
-                "P",
-                "AA",
+                "01234567890123456789",
+                "password",
+                "AAA",
                 "EMAIL@MAIL.COM",
-                "NAME_",
-                "SURNAME_",
+                "NAME",
+                "SURNAME",
                 22,01,2003,
                 "SPAIN",
                 "VALENCIA",
@@ -327,67 +327,69 @@ namespace AdminMenu{
         UILib::Text title = {
             {255,255,255,255},
             "REGISTERED USERS",
-            Utils::kBaseFontSize*2.0f
+            Utils::kBaseFontSize*3.5f
         };
         
         esat::DrawSetTextFont("./Assets/Fonts/Neuropol.otf");
         UILib::DrawText(
             (Utils::kWindowWidth*0.5f) - ((strlen(title.text)/2.5f)*title.font_size),
-            50, 
+            100, 
             title
         );
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
-    void DrawUserItem(JMATH::Vec2 coord, UserManager::User user){
+    void DrawUserItem(JMATH::Vec2 coord, float font_size, UserManager::User user){
         UILib::DrawText(
             coord, 
             {
                 {255,255,255,255},
                 user.username,
-                {(float)Utils::kBaseFontSize}
+                font_size
             }
         );
         UILib::DrawText(
-            JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("USERNAME       "),0}), 
+            JMATH::Vec2Sum(coord, {font_size*strlen("0123456789    "),0}), 
             {
                 {255,255,255,255},
                 user.alias,
-                {(float)Utils::kBaseFontSize}
+                font_size
             }
         );
 
         UILib::DrawIntToText(
-            JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("USERNAME       ALIAS "),0}), 
+            JMATH::Vec2Sum(coord, {font_size*strlen("0123456789   ALIAS  "),0}), 
             {
                 {255,255,255,255},
                 nullptr,
-                {(float)Utils::kBaseFontSize}
+                font_size
             },
             ((int)user.credits),2,true
         );
     }
 
     void DrawUserList(){
+        float list_font_size = Utils::kBaseFontSize * 1.5f;
+
         JMATH::Vec2 base_coord = {
             (Utils::kWindowWidth*0.5f) - 
-            (strlen("USERNAME       ALIAS CREDITS EDIT DELETE") * 0.45f * ((float)Utils::kBaseFontSize)),
-            100
+            (strlen("0123456789  ALIAS  CREDITS EDIT DELETE") * 0.45f * list_font_size),
+            200
         };
-        JMATH::Vec2 margin_v = {0,35};
+        JMATH::Vec2 margin_v = {0,55};
 
         UILib::DrawText(
             base_coord,
             {
                 {255,255,255,255},
                 "USERNAME               ALIAS   CREDITS",
-                {(float)Utils::kBaseFontSize}
+                {list_font_size}
             }
         );
 
         //Starts with 1 to apply margin from the beghining
         for(int i = 0; i < 10; i++){
-            DrawUserItem(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i+1)), *(page_users+i));
+            DrawUserItem(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i+1)), list_font_size, *(page_users+i));
         }
     }
 

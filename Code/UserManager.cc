@@ -20,10 +20,10 @@ namespace UserManager{
     int r_users_t = 0;
     
     //Extra length space for '\0' character to have space
-    unsigned char kDefaultStrL = 21;
-    unsigned char kAliasStrL = 4;
-    unsigned char kEmailStrL = 51;
-    unsigned char kCreditsStrL = 3;
+    unsigned char kDefaultStrL = 20;
+    unsigned char kAliasStrL = 3;
+    unsigned char kEmailStrL = 50;
+    unsigned char kCreditsStrL = 2;
 
     bool LoadRegisteredUsers(){
         bool is_loaded = false;

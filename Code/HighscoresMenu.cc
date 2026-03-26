@@ -123,65 +123,68 @@ namespace HighscoresMenu{
         UILib::Text title = {
             {255,255,255,255},
             "TOP 10 SCORES",
-            Utils::kBaseFontSize*2.0f
+            Utils::kBaseFontSize*3.5f
         };
         
         esat::DrawSetTextFont("./Assets/Fonts/Neuropol.otf");
         UILib::DrawText(
             (Utils::kWindowWidth*0.5f) - ((strlen(title.text)/2.5f)*title.font_size),
-            50, 
+            100, 
             title
         );
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
-    void DrawHighScore(JMATH::Vec2 coord, GameManager::PlayedGame game){
+    void DrawHighScore(JMATH::Vec2 coord, float font_size, GameManager::PlayedGame game){
+
         UILib::DrawText(
             coord, 
             {
                 {255,255,255,255},
                 "ALIAS",
-                {(float)Utils::kBaseFontSize}
+                font_size
             }
         );
         UILib::DrawText(
-            JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("ALIAS "),0}), 
+            JMATH::Vec2Sum(coord, {font_size*strlen("ALIAS "),0}), 
             {
                 {255,255,255,255},
                 "AAA",
-                {(float)Utils::kBaseFontSize}
+                font_size
             }
         );
 
         UILib::DrawText(
-            JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("ALIAS AAA        "),0}), 
+            JMATH::Vec2Sum(coord, {font_size*strlen("ALIAS AAA    "),0}), 
             {
                 {255,255,255,255},
                 "SCORE",
-                {(float)Utils::kBaseFontSize}
+                font_size
             }
         );
         UILib::DrawIntToText(
-            JMATH::Vec2Sum(coord, {(float)Utils::kBaseFontSize*strlen("ALIAS AAA        SCORE "),0}), 
+            JMATH::Vec2Sum(coord, {font_size*strlen("ALIAS AAA    SCORE "),0}), 
             {
                 {255,255,255,255},
                 nullptr,
-                {(float)Utils::kBaseFontSize}
+                font_size
             },
             0,6,true
         );
     }
 
     void DrawGameScores(){
+        float list_font_size = Utils::kBaseFontSize * 2.0f;
+        
         JMATH::Vec2 base_coord = {
             (Utils::kWindowWidth*0.5f) - 
-            (strlen("ALIAS AAA        SCORE 000000") * 0.45f * ((float)Utils::kBaseFontSize)),
-            100
+            (strlen("ALIAS AAA    SCORE 000000") * 0.45f * list_font_size),
+            200
         };
-        JMATH::Vec2 margin_v = {0,45};
+        JMATH::Vec2 margin_v = {0,65};
 
         for(int i = 0; i < 10; i++){
-            DrawHighScore(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)), *(top_games+i));
+            DrawHighScore(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)), list_font_size, *(top_games+i));
         }
     }
 
