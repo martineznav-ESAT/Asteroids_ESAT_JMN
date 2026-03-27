@@ -61,17 +61,18 @@ namespace AdminMenu{
     //Initializes all menu buttons
     void InitButtons(){
         Utils::Color text_color = {255,255,255,255};
+        float list_font_size = Utils::kBaseFontSize;
 
         JMATH::Vec2 base_button_coord = {
-            (Utils::kWindowWidth) - (strlen("EDIT DELETE  ") * ((float)Utils::kBaseFontSize)),
-            115
+            (Utils::kWindowWidth) - (strlen("EDIT DELETE  ") * list_font_size),
+            232.0f
         };
 
         JMATH::Vec2 button_height = {0,25};
-        JMATH::Vec2 margin_v = {0,17.5f};
-        JMATH::Vec2 edit_width = {(strlen("EDIT")*(float)Utils::kBaseFontSize),0};
-        JMATH::Vec2 delete_width_1 = {(strlen("EDIT ")*(float)Utils::kBaseFontSize),0};
-        JMATH::Vec2 delete_width_2 = {(strlen("EDIT DELETE")*(float)Utils::kBaseFontSize),0};
+        JMATH::Vec2 margin_v = {0,27.5f};
+        JMATH::Vec2 edit_width = {(strlen("EDIT")*list_font_size),0};
+        JMATH::Vec2 delete_width_1 = {(strlen("EDIT ")*list_font_size),0};
+        JMATH::Vec2 delete_width_2 = {(strlen("EDITDELETE")*list_font_size),0};
 
         //USER MANAGEMENT BUTTONS
         for(int i = 0, u = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
@@ -87,7 +88,7 @@ namespace AdminMenu{
                     {
                         text_color,
                         (menu_items+i)->item_name.text,
-                        (float)Utils::kBaseFontSize
+                        list_font_size
                     },
                     true,
                     EditAction,
@@ -105,7 +106,7 @@ namespace AdminMenu{
                     {
                         text_color,
                         (menu_items+i)->item_name.text,
-                        (float)Utils::kBaseFontSize
+                        list_font_size
                     },
                     true,
                     DeleteAction,
@@ -119,15 +120,15 @@ namespace AdminMenu{
         UILib::InitButton(
             &((menu_items+((int)AdminMenuItems::PREV_PAG_BTN))->item.btn_item),
             {
-                {30.0f, Utils::kWindowHeight-140.0f},
-                {80.0f, Utils::kWindowHeight-90.0f}
+                {50.0f, Utils::kWindowHeight-175.0f},
+                {100.0f, Utils::kWindowHeight-125.0f}
             },
             {100,100,100,200},
             {100,100,100,200},
             {
                 text_color,
                 (menu_items+((int)AdminMenuItems::PREV_PAG_BTN))->item_name.text,
-                (float)Utils::kBaseFontSize
+                list_font_size
             },
             true,
             PrevPageAction
@@ -136,15 +137,15 @@ namespace AdminMenu{
         UILib::InitButton(
             &((menu_items+((int)AdminMenuItems::NEXT_PAG_BTN))->item.btn_item),
             {
-                {Utils::kWindowWidth-80.0f, Utils::kWindowHeight-140.0f},
-                {Utils::kWindowWidth-30.0f, Utils::kWindowHeight-90.0f}
+                {Utils::kWindowWidth-100.0f, Utils::kWindowHeight-175.0f},
+                {Utils::kWindowWidth-50.0f, Utils::kWindowHeight-125.0f}
             },
             {100,100,100,200},
             {100,100,100,200},
             {
                 text_color,
                 (menu_items+((int)AdminMenuItems::NEXT_PAG_BTN))->item_name.text,
-                (float)Utils::kBaseFontSize
+                list_font_size
             },
             true,
             NextPageAction
@@ -153,15 +154,15 @@ namespace AdminMenu{
         UILib::InitButton(
             &((menu_items+((int)AdminMenuItems::CREATE_BTN))->item.btn_item),
             {
-                {30.0f, Utils::kWindowHeight-80.0f},
-                {100.0f, Utils::kWindowHeight-30.0f}
+                {50.0f, Utils::kWindowHeight-80.0f},
+                {150.0f, Utils::kWindowHeight-30.0f}
             },
             {100,100,100,200},
             {100,100,100,200},
             {
                 text_color,
                 (menu_items+((int)AdminMenuItems::CREATE_BTN))->item_name.text,
-                (float)Utils::kBaseFontSize
+                list_font_size
             },
             true,
             CreateAction
@@ -170,15 +171,15 @@ namespace AdminMenu{
         UILib::InitButton(
             &((menu_items+((int)AdminMenuItems::BACK_BTN))->item.btn_item),
             {
-                {Utils::kWindowWidth-100.0f, Utils::kWindowHeight-80.0f},
-                {Utils::kWindowWidth-30.0f, Utils::kWindowHeight-30.0f}
+                {Utils::kWindowWidth-150.0f, Utils::kWindowHeight-80.0f},
+                {Utils::kWindowWidth-50.0f, Utils::kWindowHeight-30.0f}
             },
             {100,100,100,200},
             {100,100,100,200},
             {
                 text_color,
                 (menu_items+((int)AdminMenuItems::BACK_BTN))->item_name.text,
-                (float)Utils::kBaseFontSize
+                list_font_size
             },
             true,
             BackAction
@@ -240,7 +241,7 @@ namespace AdminMenu{
 
         for(unsigned char i = 0; i < 10; i++){
             *(page_users+i) = {
-                "01234567890123456789",
+                "USER",
                 "password",
                 "AAA",
                 "EMAIL@MAIL.COM",
@@ -250,7 +251,7 @@ namespace AdminMenu{
                 "SPAIN",
                 "VALENCIA",
                 i,
-                false
+                i == 5
             };
         }
     }
@@ -332,7 +333,7 @@ namespace AdminMenu{
         
         esat::DrawSetTextFont("./Assets/Fonts/Neuropol.otf");
         UILib::DrawText(
-            (Utils::kWindowWidth*0.5f) - ((strlen(title.text)/2.5f)*title.font_size),
+            (Utils::kWindowWidth*0.5f) - ((strlen(title.text)*0.425)*title.font_size),
             100, 
             title
         );
@@ -348,6 +349,7 @@ namespace AdminMenu{
                 font_size
             }
         );
+
         UILib::DrawText(
             JMATH::Vec2Sum(coord, {font_size*strlen("0123456789    "),0}), 
             {
@@ -366,6 +368,18 @@ namespace AdminMenu{
             },
             ((int)user.credits),2,true
         );
+
+        if(user.is_admin){
+            UILib::DrawText(
+                JMATH::Vec2Sum(coord, {font_size*strlen("0123456789   ALIAS  CREDITS"),0}), 
+                {
+                    {255,255,255,255},
+                    "X",
+                    font_size
+                }
+            );
+        }
+        
     }
 
     void DrawUserList(){
@@ -373,7 +387,7 @@ namespace AdminMenu{
 
         JMATH::Vec2 base_coord = {
             (Utils::kWindowWidth*0.5f) - 
-            (strlen("0123456789  ALIAS  CREDITS EDIT DELETE") * 0.45f * list_font_size),
+            (strlen("USERNAME             ALIAS   CREDITS   ADMIN") * 0.45f * list_font_size),
             200
         };
         JMATH::Vec2 margin_v = {0,55};
@@ -382,7 +396,7 @@ namespace AdminMenu{
             base_coord,
             {
                 {255,255,255,255},
-                "USERNAME               ALIAS   CREDITS",
+                "USERNAME               ALIAS   CREDITS      ADMIN",
                 {list_font_size}
             }
         );

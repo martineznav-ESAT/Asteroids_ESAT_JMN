@@ -16,6 +16,7 @@
 #include "./LoginMenu.h"
 #include "./RegisterMenu.h"
 #include "./AdminMenu.h"
+#include "./UserManager.h"
 
 namespace RegisterMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
@@ -46,7 +47,7 @@ namespace RegisterMenu{
 
     //Initializes all menu buttons
     void InitButtons(){
-        JMATH::Vec2 centered_bottom_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight-25.0f};
+        JMATH::Vec2 centered_bottom_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight-200.0f};
         Utils::Collider left_button = 
         {
             {centered_bottom_coords.x-150-50, centered_bottom_coords.y-50},
@@ -61,6 +62,8 @@ namespace RegisterMenu{
         Utils::Color button_color = {100,100,100,200};
         Utils::Color text_color = {255,255,255,255};
 
+        float btn_font_size = Utils::kBaseFontSize;
+
         UILib::InitButton(
             &((menu_items+((int)RegisterItems::SAVE_BTN))->item.btn_item),
             left_button,
@@ -69,13 +72,11 @@ namespace RegisterMenu{
             {
                 text_color,
                 "SAVE",
-                (float)Utils::kBaseFontSize
+                btn_font_size
             },
             true,
             SaveAction
         );
-
-        printf("%d\n",prev_level);
 
         UILib::InitButton(
             &((menu_items+((int)RegisterItems::BACK_BTN))->item.btn_item),
@@ -85,7 +86,7 @@ namespace RegisterMenu{
             {
                 text_color,
                 "BACK",
-                (float)Utils::kBaseFontSize
+                btn_font_size
             },
             true,
             BackAction
@@ -94,9 +95,9 @@ namespace RegisterMenu{
 
     //Initializes all menu text Inputs
     void InitTextInputs(){
-        Utils::Collider first_left_side = {{(Utils::kWindowWidth*0.5f)-250, 30}, JMATH::Vec2Sub({(Utils::kWindowWidth*0.5f)-50, 60},{0.0f, 4.0f})};
-        Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 30}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 60}};
-        JMATH::Vec2 margin_y = {0.0f, 50.0f};
+        Utils::Collider first_left_side = {{(Utils::kWindowWidth*0.5f)-350, 100}, JMATH::Vec2Sub({(Utils::kWindowWidth*0.5f)-50, 150},{0.0f, 4.0f})};
+        Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 112.5f}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 152.5f}};
+        JMATH::Vec2 margin_y = {0.0f, 57.5f};
         float aux_input_width = first_right_side.P2.x-first_right_side.P1.x;
 
         JMATH::Vec2 dob_aux_P1 = JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,6));
@@ -105,13 +106,15 @@ namespace RegisterMenu{
         JMATH::Vec2 admin_aux_P1 = JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,9));
         JMATH::Vec2 admin_aux_P2 = JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,9));
 
+        float ti_font_size = Utils::kBaseFontSize;
+
         UILib::InitTextInput(
             &((menu_items + ((int)RegisterItems::USERNAME_TI))->item.text_item),
             first_left_side,
             first_right_side,
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             false
@@ -123,7 +126,7 @@ namespace RegisterMenu{
             {JMATH::Vec2Sum(first_right_side.P1, margin_y),JMATH::Vec2Sum(first_right_side.P2, margin_y)},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             false
@@ -135,19 +138,23 @@ namespace RegisterMenu{
             {JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,2)),JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,2))},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
-            false
+            false,
+            UserManager::kAliasStrL
         );
 
         UILib::InitTextInput(
             &((menu_items + ((int)RegisterItems::EMAIL_TI))->item.text_item),
             {JMATH::Vec2Sum(first_left_side.P1, JMATH::Vec2Scale(margin_y,3)),JMATH::Vec2Sum(first_left_side.P2, JMATH::Vec2Scale(margin_y,3))},
-            {JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,3)),JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,3))},
+            {
+                JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,3)),
+                JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,3))
+            },
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             false
@@ -159,7 +166,7 @@ namespace RegisterMenu{
             {JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,4)),JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,4))},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             false
@@ -171,7 +178,7 @@ namespace RegisterMenu{
             {JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,5)),JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,5))},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             false
@@ -183,7 +190,7 @@ namespace RegisterMenu{
             {dob_aux_P1, JMATH::Vec2Sub(dob_aux_P2, {(aux_input_width/3)*2, 0.0f})},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             true,
@@ -196,7 +203,7 @@ namespace RegisterMenu{
             {JMATH::Vec2Sum(dob_aux_P1, {(aux_input_width/3), 0.0f}), JMATH::Vec2Sub(dob_aux_P2, {(aux_input_width/3), 0.0f})},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             false,
             true,
@@ -209,7 +216,7 @@ namespace RegisterMenu{
             {JMATH::Vec2Sum(dob_aux_P1, {(aux_input_width/3)*2, 0.0f}), dob_aux_P2},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             false,
             true,
@@ -222,7 +229,7 @@ namespace RegisterMenu{
             {JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,7)),JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,7))},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             false
@@ -234,7 +241,7 @@ namespace RegisterMenu{
             {JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,8)),JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,8))},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             false
@@ -246,19 +253,21 @@ namespace RegisterMenu{
             {JMATH::Vec2Sub(admin_aux_P1,{100.0f,0.0f}),JMATH::Vec2Sub(admin_aux_P2,{aux_input_width+50.0f,0.0f})},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
             true,
-            2
+            UserManager::kCreditsStrL
         );
     }
 
     void InitCheckboxes(){
-        Utils::Collider first_left_side = {{(Utils::kWindowWidth*0.5f)-250, 30}, JMATH::Vec2Sub({(Utils::kWindowWidth*0.5f)-50, 60},{0.0f, 4.0f})};
-        Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 30}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 60}};
-        JMATH::Vec2 margin_y = {0.0f, 50.0f};
+        Utils::Collider first_left_side = {{(Utils::kWindowWidth*0.5f)-250, 100}, JMATH::Vec2Sub({(Utils::kWindowWidth*0.5f)-50, 150},{0.0f, 4.0f})};
+        Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 120}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 155}};
+        JMATH::Vec2 margin_y = {0.0f, 57.5f};
         float aux_input_width = first_right_side.P2.x-first_right_side.P1.x;
+
+        float chk_font_size = Utils::kBaseFontSize*1.5f;
 
         JMATH::Vec2 admin_aux_P1 = JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,9));
         JMATH::Vec2 admin_aux_P2 = JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,9));
@@ -269,7 +278,7 @@ namespace RegisterMenu{
             {{admin_aux_P2.x-40.0f,admin_aux_P1.y},admin_aux_P2},
             {255,255,255,200},
             {50,50,50,200},
-            {{255,255,255,255},"X", (float)Utils::kBaseFontSize},
+            {{255,255,255,255},"X", chk_font_size},
             false,
             true
         );
@@ -280,92 +289,94 @@ namespace RegisterMenu{
 
         // text_inputs = (UILib::TextInput*) malloc(sizeof(UILib::TextInput)*(int)RegisterItems::TOTAL_ITEMS);
         menu_items = (UILib::UI_Item*) malloc(sizeof(UILib::UI_Item)*(int)RegisterItems::TOTAL_ITEMS);
+        float tag_font_size = Utils::kBaseFontSize*2.0f;
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::USERNAME_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"USERNAME", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"USERNAME", tag_font_size}
         );
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::PASSWORD_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"PASSWORD", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"PASSWORD", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::ALIAS_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"ALIAS", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"ALIAS", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::EMAIL_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"E-MAIL", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"E-MAIL", tag_font_size}
         );
+
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::NAME_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"NAME", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"NAME", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::SURNAME_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"SURNAME", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"SURNAME", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::DOB_DAY_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"DATE OF BIRTH", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"DATE OF BIRTH", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::DOB_MONTH_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"DOB_M", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"DOB_M", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::DOB_YEAR_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"DOB_Y", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"DOB_Y", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::COUNTRY_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"COUNTRY", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"COUNTRY", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::PROVINCE_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"PROVINCE", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"PROVINCE", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::CREDITS_TI)),
             UILib::ItemType::TEXT_INPUT,
-            {{255,255,255,255},"CREDITS", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"CREDITS", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::ADMIN_CHK)),
             UILib::ItemType::CHECKBOX,
-            {{255,255,255,255},"ADMIN", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"ADMIN", tag_font_size}
         );
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::SAVE_BTN)),
             UILib::ItemType::BUTTON,
-            {{255,255,255,255},"SAVE", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"SAVE", tag_font_size}
         );
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::BACK_BTN)),
             UILib::ItemType::BUTTON,
-            {{255,255,255,255},"BACK", Utils::kBaseFontSize*1.5f}
+            {{255,255,255,255},"BACK", tag_font_size}
         );
     }
 
@@ -426,9 +437,19 @@ namespace RegisterMenu{
     //LOGIN MENU DRAW
 
     void DrawMenuItems(){
+        Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 120}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 155}};
+        JMATH::Vec2 margin_y = {0.0f, 57.5f};
+
         for(int i = 0; i < (int)RegisterItems::TOTAL_ITEMS; i++){
             UILib::DrawItem(*(menu_items+i));
         }
+
+        
+
+        UILib::DrawText(
+            JMATH::Vec2Sum(JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,2.75)), {20,0}),
+            {{255,255,255,255},"@ASTEROIDS.ESAT",(float)Utils::kBaseFontSize}
+        );
     }
 
     //Whole Register Menu draw method

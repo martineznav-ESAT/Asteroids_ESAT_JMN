@@ -117,7 +117,7 @@ namespace LoginMenu{
                 JMATH::Vec2Sub(
                     JMATH::Vec2Sub(
                         centered_coords, 
-                        JMATH::Vec2Scale(margin_y,4)
+                        JMATH::Vec2Scale(margin_y,3)
                     ), 
                     {(strlen(aux_item->item_name.text)/3.5f)*Utils::kBaseFontSize*2,0}
                 ), 
@@ -125,7 +125,7 @@ namespace LoginMenu{
                 JMATH::Vec2Sum(
                     JMATH::Vec2Sub(
                         centered_coords, 
-                        JMATH::Vec2Scale(margin_y,3)
+                        JMATH::Vec2Scale(margin_y,2)
                     ), 
                     {(strlen(aux_item->item_name.text)/3.5f)*Utils::kBaseFontSize*2,0}
                 )
@@ -135,7 +135,7 @@ namespace LoginMenu{
                 JMATH::Vec2Sub(
                     JMATH::Vec2Sub(
                         centered_coords, 
-                        JMATH::Vec2Scale(margin_y,2)
+                        JMATH::Vec2Scale(margin_y,1.5)
                     ), 
                     {((UserManager::kDefaultStrL+1)/3.0f)*Utils::kBaseFontSize,0}
                 ), 
@@ -143,7 +143,7 @@ namespace LoginMenu{
                 JMATH::Vec2Sum(
                     JMATH::Vec2Sub(
                         centered_coords, 
-                        JMATH::Vec2Scale(margin_y,1)
+                        JMATH::Vec2Scale(margin_y,0.5)
                     ), 
                     {((UserManager::kDefaultStrL+1)/3.0f)*Utils::kBaseFontSize,0}
                 )
@@ -182,7 +182,7 @@ namespace LoginMenu{
                 JMATH::Vec2Sub(
                     JMATH::Vec2Sum(
                         centered_coords, 
-                        JMATH::Vec2Scale(margin_y,2)
+                        JMATH::Vec2Scale(margin_y,1.5)
                     ), 
                     {((UserManager::kDefaultStrL+1)/3.0f)*Utils::kBaseFontSize,0}
                 ), 
@@ -190,7 +190,7 @@ namespace LoginMenu{
                 JMATH::Vec2Sum(
                     JMATH::Vec2Sum(
                         centered_coords, 
-                        JMATH::Vec2Scale(margin_y,3)
+                        JMATH::Vec2Scale(margin_y,2.5)
                     ), 
                     {((UserManager::kDefaultStrL+1)/3.0f)*Utils::kBaseFontSize,0}
                 )

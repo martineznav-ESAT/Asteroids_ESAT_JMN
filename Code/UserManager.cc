@@ -22,7 +22,7 @@ namespace UserManager{
     //Extra length space for '\0' character to have space
     unsigned char kDefaultStrL = 20;
     unsigned char kAliasStrL = 3;
-    unsigned char kEmailStrL = 50;
+    unsigned char kEmailStrL = 40;
     unsigned char kCreditsStrL = 2;
 
     bool LoadRegisteredUsers(){

@@ -120,8 +120,8 @@ namespace MainMenu{
         UILib::InitButton(
             &((menu_items+((int)MainMenuItems::ADMIN_BTN))->item.btn_item),
             {
-                {Utils::kWindowWidth-100.0f, Utils::kWindowHeight-80.0f},
-                {Utils::kWindowWidth-30.0f, Utils::kWindowHeight-30.0f}
+                {Utils::kWindowWidth-150.0f, Utils::kWindowHeight-80.0f},
+                {Utils::kWindowWidth-50.0f, Utils::kWindowHeight-30.0f}
             },
             {100,100,100,200},
             {100,100,100,200},
