@@ -297,6 +297,7 @@ namespace UILib{
             old_length = strlen(string);
             *(string+old_length) = input_c;
             *(string+old_length+1) = '\0';
+            strupr(string);
             is_input = true;
         }else{
             if(strlen(string) > 0 && esat::IsSpecialKeyDown(esat::kSpecialKey_Backspace)){

@@ -32,7 +32,7 @@ void InitGame(){
     }else{
         RegisterMenu::Load(GameManager::Level::REGISTER_MENU);
     }
-    
+
 }
 
 void UpdateGame(){

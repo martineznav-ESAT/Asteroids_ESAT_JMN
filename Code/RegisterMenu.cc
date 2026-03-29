@@ -27,11 +27,43 @@ namespace RegisterMenu{
 
     //ACTIONS
     void SaveAction(){
-        printf("SAVE ACTION WIP\n");
-        if(prev_level == GameManager::Level::ADMIN_MENU){
-            // AdminMenu::Load();
+        UserManager::User new_user = UserManager::NewUser();
+
+        strcpy(new_user.username, (menu_items+RegisterItems::USERNAME_TI)->item.text_item.input_text.text);
+        strcpy(new_user.password, (menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text);
+
+        if(strlen(new_user.username) > 0 && strlen(new_user.password) > 0){
+            strcpy(new_user.alias, (menu_items + RegisterItems::ALIAS_TI)->item.text_item.input_text.text);
+
+            strcpy(new_user.email, (menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text);
+            strcat(new_user.email, "@ASTEROIDS.ESAT");
+
+            strcpy(new_user.name, (menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text);
+            strcpy(new_user.surname, (menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text);
+
+            new_user.day_dob = atoi((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text);
+            new_user.month_dob = atoi((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text);
+            new_user.year_dob = atoi((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text);
+
+            strcpy(new_user.country, (menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text);
+            strcpy(new_user.province, (menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text);
+
+            new_user.credits = atoi((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text);
+            new_user.is_admin = (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked;
+
+            if(UserManager::RegisterNewUser(new_user)){
+                if(prev_level == GameManager::Level::ADMIN_MENU){
+                    AdminMenu::Load();
+                }else{
+                    LoginMenu::Load(GameManager::Level::REGISTER_MENU);
+                }
+            }else{
+                //TO_DO GRAPHIC MODE
+                printf("USERNAME TAKEN\n");
+            }
         }else{
-            // LoginMenu::Load(GameManager::Level::REGISTER_MENU);
+            //TO_DO GRAPHIC MODE
+            printf("USERNAME AND PASSWORD ARE MANDATORY\n");
         }
     }
 
@@ -194,7 +226,7 @@ namespace RegisterMenu{
             true,
             true,
             true,
-            2
+            UserManager::kDOBDayL
         );
 
         UILib::InitTextInput(
@@ -207,7 +239,7 @@ namespace RegisterMenu{
             true,
             false,
             true,
-            2
+            UserManager::kDOBMonthL
         );
 
         UILib::InitTextInput(
@@ -220,7 +252,7 @@ namespace RegisterMenu{
             true,
             false,
             true,
-            2
+            UserManager::kDOBYearL
         );
 
         UILib::InitTextInput(

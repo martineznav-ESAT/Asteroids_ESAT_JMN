@@ -18,6 +18,9 @@ namespace UserManager{
     extern unsigned char kAliasStrL;
     extern unsigned char kEmailStrL;
     extern unsigned char kCreditsStrL;
+    extern unsigned char kDOBDayL;
+    extern unsigned char kDOBMonthL;
+    extern unsigned char kDOBYearL;
 
     struct User{
         char* username = nullptr;
@@ -31,10 +34,18 @@ namespace UserManager{
         int year_dob;
         char* country = nullptr;
         char* province = nullptr;
-        unsigned char credits = 3;
+        unsigned char credits;
         bool is_admin = false;
     };
 
+    User NewUser();
+
+    void FreeUserMemory(User *user);
+
+    void SaveUser(User user, FILE *dat_file);
+    User LoadUser(FILE *dat_file);
+
+    bool RegisterNewUser(User new_user);
     bool LoadRegisteredUsers();
 
     void CloseFiles();
