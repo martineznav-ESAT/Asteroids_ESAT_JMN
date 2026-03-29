@@ -30,16 +30,16 @@ namespace UILib{
         bool is_visible = false;
         switch(item.item_type){
             case UILib::BUTTON:
-                is_visible = !item.item.btn_item.is_visible;
+                is_visible = item.item.btn_item.is_visible;
             break;
             case UILib::BUTTON_PA:
-                is_visible = !item.item.btn_pa_item.is_visible;
+                is_visible = item.item.btn_pa_item.is_visible;
             break;
             case UILib::TEXT_INPUT:
-                is_visible = !item.item.text_item.is_visible;
+                is_visible = item.item.text_item.is_visible;
             break;
             case UILib::CHECKBOX:
-                is_visible = !item.item.chk_item.is_visible;
+                is_visible = item.item.chk_item.is_visible;
             break;
         }
 
@@ -357,22 +357,24 @@ namespace UILib{
 
     //Given a Text Input, it gets checked to manage input workability
     void UpdateTextInput(TextInput *ti){
-        if(ti->is_selected){
-            ti->border_color.a = 255;
+        if(ti->is_visible){
+            if(ti->is_selected){
+                ti->border_color.a = 255;
 
-            if(ti->is_number_only){
-                if(NumberInput(ti->input_text.text, ti->max_length)){
-                    UpdateTextInputPointer(ti);
+                if(ti->is_number_only){
+                    if(NumberInput(ti->input_text.text, ti->max_length)){
+                        UpdateTextInputPointer(ti);
+                    }
+                }else{
+                    if(CharInput(ti->input_text.text, ti->max_length)){
+                        UpdateTextInputPointer(ti);
+                    }
                 }
+
+                BlinkPointer(ti);
             }else{
-                if(CharInput(ti->input_text.text, ti->max_length)){
-                    UpdateTextInputPointer(ti);
-                }
+                ti->border_color.a = 200;
             }
-
-            BlinkPointer(ti);
-        }else{
-            ti->border_color.a = 200;
         }
     }
 

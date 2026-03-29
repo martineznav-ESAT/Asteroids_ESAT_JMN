@@ -159,7 +159,11 @@ namespace BTree{
                 break;
 
                 case TreeType::USER:
-                    printf("Info %s\n",tree->info.user_info.username);
+                    printf("|| User %s - Passwd %s ",tree->info.user_info.username, tree->info.user_info.password);
+                    if(tree->info.user_info.is_admin){
+                        printf("A ");
+                    }
+                    printf("||\n");
                 break;
             }
 

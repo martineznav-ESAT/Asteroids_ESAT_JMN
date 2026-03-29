@@ -17,9 +17,14 @@
 namespace UserManager{
     FILE *user_tree_dat = nullptr;
     char *user_tree_dat_path = "./Assets/Files/Data/user_tree.dat";
-    BTree::TreeNode *user_tree = nullptr;
-    int user_tree_t = 0;
     
+    //Whenever user_tree is needed, create an aux variable such as:
+    //      BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;
+    //To work with the TreeNode typing while aiming the same memory direction with a pointer anidation
+    //It has been made this way due to the impossibility to include BTree.h in UserManager since it makes an "infinite include loop"
+    void *user_tree = nullptr; 
+    int user_tree_t = 0;
+
     unsigned char kDefaultStrL = 20;
     unsigned char kAliasStrL = 3;
     unsigned char kEmailStrL = 40;
@@ -60,6 +65,42 @@ namespace UserManager{
 
         new_user.credits = 3;
         new_user.is_admin = false;
+
+        return new_user;
+    }
+
+    User NewUser(User old_user){
+        User new_user;
+        new_user.username = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
+        strcpy(new_user.username, old_user.username);
+        
+        new_user.password = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
+        strcpy(new_user.password, old_user.password);
+        
+        new_user.alias = (char*) malloc(sizeof(char)*(kAliasStrL+1));
+        strcpy(new_user.alias, old_user.alias);
+        
+        new_user.email = (char*) malloc(sizeof(char)*(kEmailStrL+1));
+        strcpy(new_user.email, old_user.email);
+        
+        new_user.name = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
+        strcpy(new_user.name, old_user.name);
+        
+        new_user.surname = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
+        strcpy(new_user.surname, old_user.surname);
+
+        new_user.day_dob = old_user.day_dob;
+        new_user.month_dob = old_user.month_dob;
+        new_user.year_dob = old_user.year_dob;
+        
+        new_user.country = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
+        strcpy(new_user.country, old_user.country);
+        
+        new_user.province = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
+        strcpy(new_user.province, old_user.province);
+
+        new_user.credits = old_user.credits ;
+        new_user.is_admin = old_user.is_admin;
 
         return new_user;
     }
@@ -178,19 +219,24 @@ namespace UserManager{
     }
 
     bool LoadRegisteredUsers(){
-        return LoadTree(&user_tree, BTree::TreeType::USER, user_tree_dat, user_tree_dat_path);
+        BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;
+        bool is_loaded = LoadTree(aux_tree, BTree::TreeType::USER, user_tree_dat, user_tree_dat_path);
+
+        // printf("%p || %p\n",*aux_tree,user_tree);
+        return is_loaded;
     }
 
     bool RegisterNewUser(User new_user){
         BTree::TreeInfo aux_info = {NULL};
         bool is_registered = true;
+        BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;;
 
         aux_info.user_info = new_user;
 
-        if(BTree::InsertTree(&user_tree, BTree::TreeType::USER, aux_info)){
+        if(BTree::InsertTree(aux_tree, BTree::TreeType::USER, aux_info)){
             printf("---- REGISTERED USERS SEARCH TREE TO SAVE  ----\n");
-            BTree::PrintTree(user_tree,0);
-            BTree::SaveTree(&user_tree, user_tree_dat, user_tree_dat_path);
+            BTree::PrintTree(*aux_tree,0);
+            BTree::SaveTree(aux_tree, user_tree_dat, user_tree_dat_path);
         }else{
             is_registered = false;
         }

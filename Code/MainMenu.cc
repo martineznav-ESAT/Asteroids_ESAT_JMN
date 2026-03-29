@@ -13,6 +13,7 @@
 #include "../Libs/CustomLibs/UILib.h"
 
 #include "./GameManager.h"
+#include "./UserManager.h"
 #include "./MainMenu.h"
 #include "./PlayMenu.h"
 #include "./HighscoresMenu.h"
@@ -175,6 +176,12 @@ namespace MainMenu{
 
     //Loads the main menu
     void Load(){
+        if (GameManager::game_status.logged_user != nullptr && (GameManager::game_status.logged_user)->is_admin){
+            (menu_items+MainMenuItems::ADMIN_BTN)->item.btn_item.is_visible = true;
+        }else{
+            (menu_items+MainMenuItems::ADMIN_BTN)->item.btn_item.is_visible = false;
+        }
+        
         GameManager::game_status.level = GameManager::Level::MAIN_MENU;
     }
 

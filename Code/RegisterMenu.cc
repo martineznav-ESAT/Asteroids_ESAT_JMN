@@ -13,6 +13,7 @@
 #include "../Libs/CustomLibs/UILib.h"
 
 #include "./GameManager.h"
+#include "./UserManager.h"
 #include "./LoginMenu.h"
 #include "./RegisterMenu.h"
 #include "./AdminMenu.h"
@@ -23,35 +24,40 @@ namespace RegisterMenu{
     UILib::UI_Item *menu_items = nullptr;
     GameManager::Level prev_level;
     int selected_item = -1;
-
+    UserManager::User form_user;
 
     //ACTIONS
+
+    //Copies form/menu_items values into User form_user with the corresponding typing conversions 
+    //and saves the user on registered users list/tree. 
+    //After finishing the registration, goes back to one of the possible previous pages before registration
     void SaveAction(){
-        UserManager::User new_user = UserManager::NewUser();
+        UserManager::FreeUserMemory(&form_user);
+        form_user = UserManager::NewUser();
 
-        strcpy(new_user.username, (menu_items+RegisterItems::USERNAME_TI)->item.text_item.input_text.text);
-        strcpy(new_user.password, (menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text);
+        strcpy(form_user.username, (menu_items+RegisterItems::USERNAME_TI)->item.text_item.input_text.text);
+        strcpy(form_user.password, (menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text);
+        strcpy(form_user.alias, (menu_items + RegisterItems::ALIAS_TI)->item.text_item.input_text.text);
 
-        if(strlen(new_user.username) > 0 && strlen(new_user.password) > 0){
-            strcpy(new_user.alias, (menu_items + RegisterItems::ALIAS_TI)->item.text_item.input_text.text);
+        if(strlen(form_user.username) > 0 && strlen(form_user.password) > 0 && strlen(form_user.alias) > 0){
 
-            strcpy(new_user.email, (menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text);
-            strcat(new_user.email, "@ASTEROIDS.ESAT");
+            strcpy(form_user.email, (menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text);
+            strcat(form_user.email, "@ASTEROIDS.ESAT");
 
-            strcpy(new_user.name, (menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text);
-            strcpy(new_user.surname, (menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text);
+            strcpy(form_user.name, (menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text);
+            strcpy(form_user.surname, (menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text);
 
-            new_user.day_dob = atoi((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text);
-            new_user.month_dob = atoi((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text);
-            new_user.year_dob = atoi((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text);
+            form_user.day_dob = atoi((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text);
+            form_user.month_dob = atoi((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text);
+            form_user.year_dob = atoi((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text);
 
-            strcpy(new_user.country, (menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text);
-            strcpy(new_user.province, (menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text);
+            strcpy(form_user.country, (menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text);
+            strcpy(form_user.province, (menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text);
 
-            new_user.credits = atoi((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text);
-            new_user.is_admin = (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked;
+            form_user.credits = atoi((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text);
+            form_user.is_admin = (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked;
 
-            if(UserManager::RegisterNewUser(new_user)){
+            if(UserManager::RegisterNewUser(form_user)){
                 if(prev_level == GameManager::Level::ADMIN_MENU){
                     AdminMenu::Load();
                 }else{
@@ -63,7 +69,7 @@ namespace RegisterMenu{
             }
         }else{
             //TO_DO GRAPHIC MODE
-            printf("USERNAME AND PASSWORD ARE MANDATORY\n");
+            printf("USERNAME, PASSWORD AND ALIAS ARE MANDATORY\n");
         }
     }
 
@@ -75,7 +81,7 @@ namespace RegisterMenu{
         }
     }
 
-    //LOGIN MENU INIT
+    //REGISTER MENU INIT
 
     //Initializes all menu buttons
     void InitButtons(){
@@ -414,29 +420,86 @@ namespace RegisterMenu{
 
     //Whole Register Menu initializer
     void Init(){
+        form_user = UserManager::NewUser();
         InitMenuItems();
         InitTextInputs();
         InitButtons();
         InitCheckboxes();
     }
 
-    //LOGIN MENU LOAD
+    //REGISTER MENU LOAD
+
+    void CleanForm(bool is_admin = false){
+        strcpy((menu_items + RegisterItems::USERNAME_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + RegisterItems::USERNAME_TI)->item.text_item.pointer, "|\0");
+
+        strcpy((menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + RegisterItems::PASSWORD_TI)->item.text_item.pointer, "|\0");
+        
+        strcpy((menu_items + RegisterItems::ALIAS_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + RegisterItems::ALIAS_TI)->item.text_item.pointer, "|\0");
+        
+        strcpy((menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + RegisterItems::EMAIL_TI)->item.text_item.pointer, "|\0");
+        
+        strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.pointer, "|\0");
+        
+        strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.pointer, "|\0");
+
+        strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text, "01\0");
+        strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.pointer, "  |\0");
+        
+        strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text, "01\0");
+        strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.pointer, "  |\0");
+        
+        strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text, "1979\0");
+        strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.pointer, "    |\0");
+
+        strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.pointer, "|\0");
+        
+        strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.pointer, "|\0");
+
+        strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text, "3\0");
+        strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.pointer, " |\0");
+        
+        (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = is_admin;
+    }
 
     //Based on the level/screen you come from, the Register Menu will be loaded differently
     void Load(GameManager::Level level_p){
         prev_level = level_p;
         GameManager::game_status.level = GameManager::Level::REGISTER_MENU;
 
-        if(prev_level == GameManager::Level::REGISTER_MENU){
+        if(UserManager::user_tree_t <= 0){
+            //First ever game exexution opens ADMIN REGISTRATION 
             (menu_items+((int)RegisterItems::ADMIN_CHK))->item.chk_item.is_checked = true;
             (menu_items+((int)RegisterItems::BACK_BTN))->item.btn_item.is_visible = false;
+
+            form_user.is_admin = true;
         }else{
             (menu_items+((int)RegisterItems::ADMIN_CHK))->item.chk_item.is_checked = false;
             (menu_items+((int)RegisterItems::BACK_BTN))->item.btn_item.is_visible = true;
+
+            form_user.is_admin = false;
         }
+
+        CleanForm(form_user.is_admin);
     }
 
-    //LOGIN MENU UPDATE
+    //REGISTER MENU UPDATE
+
+    //In case its the first ever user being registered, or in case the logged user is not an admin (or there's no logged user at all)
+    //The fields CREDITS and ADMIN will not be modifieable
+    bool IsUneditable(RegisterItems r_item){
+        return (
+            (r_item == RegisterItems::CREDITS_TI || r_item == RegisterItems::ADMIN_CHK) &&
+            (UserManager::user_tree_t <= 0 || GameManager::game_status.logged_user == nullptr || !((GameManager::game_status.logged_user)->is_admin))
+        );
+    }
 
     //Whole Register Menu update method
     void Update(){
@@ -451,22 +514,28 @@ namespace RegisterMenu{
 
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
-            if(selected_item <= 0){
-                selected_item = ((int)RegisterItems::TOTAL_ITEMS) - 1;
-            }else{
-                selected_item--;
-            }
+            do{
+                if(selected_item <= 0){
+                    selected_item = ((int)RegisterItems::TOTAL_ITEMS) - 1;
+                }else{
+                    selected_item--;
+                }
+            }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
-            ++selected_item %= (int)RegisterItems::TOTAL_ITEMS;
+            do{
+                ++selected_item %= (int)RegisterItems::TOTAL_ITEMS;
+            }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
         }
         
         for(int i = 0; i < (int)RegisterItems::TOTAL_ITEMS; i++){
-            UILib::UpdateItem(menu_items+i, &selected_item, i);
+            if(!IsUneditable((RegisterItems)i)){
+                UILib::UpdateItem(menu_items+i, &selected_item, i);
+            }
         }
     }
 
-    //LOGIN MENU DRAW
+    //REGISTER MENU DRAW
 
     void DrawMenuItems(){
         Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 120}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 155}};
@@ -493,6 +562,7 @@ namespace RegisterMenu{
         for(int i = 0; i < (int)RegisterItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);
         }
+        UserManager::FreeUserMemory(&form_user);
         free(menu_items);
     }
 }

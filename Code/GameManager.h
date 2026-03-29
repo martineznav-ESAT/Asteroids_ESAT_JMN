@@ -42,6 +42,7 @@ namespace GameManager{
     };
 
     struct PlayedGame{
+        int game_id = 0;
         Gamemode gm = ONE_PLAYER;
         UserManager::User p1_user;
         UserManager::User p2_user;
@@ -52,10 +53,12 @@ namespace GameManager{
 
     struct GameStatus{
         Level level = LOGIN_MENU;
-        UserManager::User actual_user;
+        UserManager::User *logged_user;
     };
 
     extern GameStatus game_status;
+
+    void LoadInitLevel();
 
     void DebugUpdate();
 }

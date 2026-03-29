@@ -27,12 +27,7 @@ void InitGame(){
     HighscoresMenu::Init();
     AdminMenu::Init();
 
-    if (UserManager::LoadRegisteredUsers()){
-        LoginMenu::Load(GameManager::Level::LOGIN_MENU);
-    }else{
-        RegisterMenu::Load(GameManager::Level::REGISTER_MENU);
-    }
-
+    GameManager::LoadInitLevel();
 }
 
 void UpdateGame(){

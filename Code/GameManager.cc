@@ -10,14 +10,26 @@
 
 #include "./GameManager.h"
 #include "./UserManager.h"
+#include "./LoginMenu.h"
+#include "./RegisterMenu.h"
 
 //Holds the game information needed globally, that may be needed for Level/Screen management 
 namespace GameManager{
-    GameStatus game_status;
+    GameStatus game_status = {
+        LOGIN_MENU,
+        nullptr
+    };
+
+    void LoadInitLevel(){
+        if (UserManager::LoadRegisteredUsers()){
+            LoginMenu::Load(GameManager::Level::LOGIN_MENU);
+        }else{
+            RegisterMenu::Load(GameManager::Level::REGISTER_MENU);
+        }
+    }
 
     //Debug Level switch by F1-F7 keyboard input
     void DebugUpdate(){
-
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F1)){
             game_status.level = LOGIN_MENU;
         }

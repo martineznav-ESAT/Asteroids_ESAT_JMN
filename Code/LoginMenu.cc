@@ -11,8 +11,10 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
+#include "../Libs/CustomLibs/BTree.h"
 
 #include "./GameManager.h"
+#include "./UserManager.h"
 #include "./LoginMenu.h"
 #include "./RegisterMenu.h"
 #include "./MainMenu.h"
@@ -24,19 +26,55 @@ namespace LoginMenu{
     GameManager::Level prev_level;
     int selected_item = -1;
 
+    bool VerifyLogin(UserManager::User **user){
+        BTree::TreeNode* aux_tn = nullptr;
+        bool is_verified = false;
+        BTree::TreeNode** aux_user_tree = (BTree::TreeNode**) &(UserManager::user_tree);
+        BTree::TreeInfo aux_ti = {NULL};
+        aux_ti.user_info = UserManager::NewUser();
+        strcpy(aux_ti.user_info.username, (menu_items+LoginItems::USER_TI)->item.text_item.input_text.text);
+        strcpy(aux_ti.user_info.password, (menu_items+LoginItems::PASSWD_TI)->item.text_item.input_text.text);
+
+        aux_tn = BTree::FindTreeNode(*aux_user_tree, aux_ti);
+        if(aux_tn != nullptr){
+            is_verified = (strcmp(aux_tn->info.user_info.password, aux_ti.user_info.password) == 0);
+            if(is_verified){
+                *user = &(aux_tn->info.user_info);
+            }else{
+                //TO_DO GRAPHIC
+                printf("PASSWORD DOES NOT MATCH WITH USERNAME %s\n", aux_ti.user_info.username);
+            }
+        }else{
+            //TO_DO GRAPHIC
+            printf("USERNAME %s NOT FOUND\n", aux_ti.user_info.username);
+        }
+
+        
+        UserManager::FreeUserMemory(&aux_ti.user_info);
+        return is_verified;
+    }
 
     //ACTIONS
     void LoginAction(){
         switch(prev_level){
             case GameManager::Level::PLAY_MENU:
-                //TO_DO
-                // Game::Load(Multiplayer);
+                // if(VerifyLogin(&(Game::actual_game.p2_user))){
+                //     // Game::Load(Multiplayer);
+                // }
             break;
             default:
-                MainMenu::Load();
+                if(VerifyLogin(&(GameManager::game_status.logged_user))){
+                    printf("LOGGED USER -> %s %s ", GameManager::game_status.logged_user->username, GameManager::game_status.logged_user->alias);
+                    if(GameManager::game_status.logged_user->is_admin){
+                        printf("IS_ADMIN ");
+                    }
+                    printf("\n");
+                    MainMenu::Load();
+                }
             break;
         }
     }
+    
 
     void RegisterAction(){
         RegisterMenu::Load(GameManager::Level::LOGIN_MENU);
@@ -240,10 +278,19 @@ namespace LoginMenu{
     }
 
     //LOGIN MENU LOAD
+    
+    void CleanForm(bool is_admin = false){
+        strcpy((menu_items + LoginItems::USER_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + LoginItems::USER_TI)->item.text_item.pointer, "|\0");
+
+        strcpy((menu_items + LoginItems::PASSWD_TI)->item.text_item.input_text.text, "\0");
+        strcpy((menu_items + LoginItems::PASSWD_TI)->item.text_item.pointer, "|\0");
+    }
 
     //Based on the level/screen you come from, the Login Menu will be loaded differently
     void Load(GameManager::Level level_p){
         prev_level = level_p;
+        CleanForm();
         switch(level_p){
             case GameManager::Level::PLAY_MENU:
             case GameManager::Level::MAIN_MENU:

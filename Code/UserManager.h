@@ -14,14 +14,6 @@
 //Holds the game information needed globally, that may be needed to save and the Level/Screen management 
 namespace UserManager{
 
-    extern unsigned char kDefaultStrL;
-    extern unsigned char kAliasStrL;
-    extern unsigned char kEmailStrL;
-    extern unsigned char kCreditsStrL;
-    extern unsigned char kDOBDayL;
-    extern unsigned char kDOBMonthL;
-    extern unsigned char kDOBYearL;
-
     struct User{
         char* username = nullptr;
         char* password = nullptr;
@@ -37,6 +29,21 @@ namespace UserManager{
         unsigned char credits;
         bool is_admin = false;
     };
+
+    extern unsigned char kDefaultStrL;
+    extern unsigned char kAliasStrL;
+    extern unsigned char kEmailStrL;
+    extern unsigned char kCreditsStrL;
+    extern unsigned char kDOBDayL;
+    extern unsigned char kDOBMonthL;
+    extern unsigned char kDOBYearL;
+
+    //Whenever user_tree is needed, create an aux variable such as:
+    //      BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;
+    //To work with the TreeNode typing while aiming the same memory direction
+    //Made this way due to not being able to include BTree.h in UserManager since it makes an "infinite include loop"
+    extern void *user_tree;
+    extern int user_tree_t;
 
     User NewUser();
 

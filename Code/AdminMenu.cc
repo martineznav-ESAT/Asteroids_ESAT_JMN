@@ -296,12 +296,12 @@ namespace AdminMenu{
                 }else{
                     selected_item--;
                 }
-            }while(UILib::IsItemVisible(*(menu_items+selected_item)));
+            }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
             do{
                 ++selected_item %= (int)AdminMenuItems::TOTAL_ITEMS;
-            }while(UILib::IsItemVisible(*(menu_items+selected_item)));
+            }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
         }
         
         for(int i = 0; i < (int)AdminMenuItems::TOTAL_ITEMS; i++){
