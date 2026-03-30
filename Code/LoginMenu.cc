@@ -191,6 +191,7 @@ namespace LoginMenu{
             {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
             true,
             true,
+            false,
             false
         );
 
@@ -238,7 +239,8 @@ namespace LoginMenu{
             {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
             true,
             true,
-            false
+            false,
+            true
         );
     }
 

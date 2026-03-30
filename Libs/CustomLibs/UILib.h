@@ -67,6 +67,7 @@ namespace UILib{
         bool is_tag_v = true;
         bool is_number_only = false;
         int max_length;
+        bool is_passwd = false;
     };
 
     //UI Checkbox structure
@@ -149,6 +150,7 @@ namespace UILib{
         bool is_visible, 
         bool is_tag_v, 
         bool is_number_only, 
+        bool is_passwd, 
         int max_length = UserManager::kDefaultStrL
     );
 

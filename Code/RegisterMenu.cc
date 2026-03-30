@@ -155,6 +155,7 @@ namespace RegisterMenu{
             {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
+            false,
             false
         );
 
@@ -167,7 +168,8 @@ namespace RegisterMenu{
             {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
-            false
+            false,
+            true
         );
 
         UILib::InitTextInput(
@@ -179,6 +181,7 @@ namespace RegisterMenu{
             {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
+            false,
             false,
             UserManager::kAliasStrL
         );
@@ -195,6 +198,7 @@ namespace RegisterMenu{
             {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
+            false,
             false
         );
 
@@ -207,6 +211,7 @@ namespace RegisterMenu{
             {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
+            false,
             false
         );
 
@@ -219,6 +224,7 @@ namespace RegisterMenu{
             {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
+            false,
             false
         );
 
@@ -232,6 +238,7 @@ namespace RegisterMenu{
             true,
             true,
             true,
+            false,
             UserManager::kDOBDayL
         );
 
@@ -245,6 +252,7 @@ namespace RegisterMenu{
             true,
             false,
             true,
+            false,
             UserManager::kDOBMonthL
         );
 
@@ -258,6 +266,7 @@ namespace RegisterMenu{
             true,
             false,
             true,
+            false,
             UserManager::kDOBYearL
         );
 
@@ -270,6 +279,7 @@ namespace RegisterMenu{
             {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
+            false,
             false
         );
 
@@ -282,6 +292,7 @@ namespace RegisterMenu{
             {{255,255,255,255},nullptr, ti_font_size},
             true,
             true,
+            false,
             false
         );
 
@@ -295,6 +306,7 @@ namespace RegisterMenu{
             true,
             true,
             true,
+            false,
             UserManager::kCreditsStrL
         );
     }

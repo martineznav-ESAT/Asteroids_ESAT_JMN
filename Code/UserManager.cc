@@ -229,14 +229,15 @@ namespace UserManager{
     bool RegisterNewUser(User new_user){
         BTree::TreeInfo aux_info = {NULL};
         bool is_registered = true;
-        BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;;
+        BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;
 
-        aux_info.user_info = new_user;
+        aux_info.user_info = NewUser(new_user);
 
         if(BTree::InsertTree(aux_tree, BTree::TreeType::USER, aux_info)){
             printf("---- REGISTERED USERS SEARCH TREE TO SAVE  ----\n");
             BTree::PrintTree(*aux_tree,0);
             BTree::SaveTree(aux_tree, user_tree_dat, user_tree_dat_path);
+            user_tree_t++;
         }else{
             is_registered = false;
         }

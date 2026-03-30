@@ -258,7 +258,7 @@ namespace UILib{
     //TEXT_INPUT
 
     //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
-    void InitTextInput(UILib::TextInput *ti, Utils::Collider tag_box, Utils::Collider input_box, Utils::Color border_color, Utils::Color fill_color, UILib::Text ti_text, bool is_visible, bool is_tag_v, bool is_number_only, int max_length){
+    void InitTextInput(UILib::TextInput *ti, Utils::Collider tag_box, Utils::Collider input_box, Utils::Color border_color, Utils::Color fill_color, UILib::Text ti_text, bool is_visible, bool is_tag_v, bool is_number_only, bool is_passwd, int max_length){
         //The char memory block has 1 extra space for the blinking effect to work when selected 
         ti_text.text = (char*) malloc(sizeof(char) * (max_length+1));
         *(ti_text.text) = '\0'; 
@@ -276,7 +276,8 @@ namespace UILib{
             false,
             is_tag_v,
             is_number_only,
-            max_length
+            max_length,
+            is_passwd
         };
 
         ti->pointer = (char*) malloc(sizeof(char) * (max_length+2));
@@ -380,6 +381,7 @@ namespace UILib{
 
     //Draws on screen the TextInput given as parameter
     void DrawTextInput(TextInput ti, Text tag){
+        UILib::Text passwd_text{{255,255,255,255},nullptr,2};
 
         if(ti.is_visible){
 
@@ -395,12 +397,33 @@ namespace UILib{
             Utils::DrawCollider(ti.input_box, ti.border_color, ti.fill_color);
 
             if(ti.input_text.text != nullptr){
-                //Draws the text centered vertically inside de input box and aligned to the left horizontaly
-                UILib::DrawText(
-                    ti.input_box.P1.x + ti.input_text.font_size*0.66f,
-                    ti.input_box.P2.y - ((ti.input_box.P2.y - ti.input_box.P1.y) * 0.5) + (ti.input_text.font_size * 0.5f), 
-                    ti.input_text
-                );
+                if(ti.is_passwd){
+                    passwd_text.color = ti.input_text.color;
+                    passwd_text.font_size = ti.input_text.font_size;
+                    passwd_text.text = (char*) malloc(sizeof(char) * (strlen(ti.input_text.text)+1));
+                    for(int i = 0; i <= strlen(ti.input_text.text); i++){
+                        *(passwd_text.text+i) = i == strlen(ti.input_text.text) ? '\0':'*';
+                    }
+
+                    //Draws the text centered vertically inside de input box and aligned to the left horizontaly
+                    UILib::DrawText(
+                        ti.input_box.P1.x + ti.input_text.font_size*0.66f,
+                        ti.input_box.P2.y - ((ti.input_box.P2.y - ti.input_box.P1.y) * 0.5) + (ti.input_text.font_size * 0.5f), 
+                        passwd_text
+                    );
+
+                    free(passwd_text.text);
+                }else{
+                    //Draws the text centered vertically inside de input box and aligned to the left horizontaly
+                    UILib::DrawText(
+                        ti.input_box.P1.x + ti.input_text.font_size*0.66f,
+                        ti.input_box.P2.y - ((ti.input_box.P2.y - ti.input_box.P1.y) * 0.5) + (ti.input_text.font_size * 0.5f), 
+                        ti.input_text
+                    );
+                }
+                
+
+
                 if(ti.is_selected && ti.is_pointer_v){
                     esat::DrawText(
                         ti.input_box.P1.x + ti.input_text.font_size*0.66f,
