@@ -38,12 +38,11 @@ namespace UserManager{
     extern unsigned char kDOBMonthL;
     extern unsigned char kDOBYearL;
 
-    //Whenever user_tree is needed, create an aux variable such as:
-    //      BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;
-    //To work with the TreeNode typing while aiming the same memory direction
-    //Made this way due to not being able to include BTree.h in UserManager since it makes an "infinite include loop"
-    extern void *user_tree;
-    extern int user_tree_t;
+    //Whenever user_list is needed, create an aux variable such as:
+    //TList::ListNode** aux_list = (TList::ListNode**) &user_list;
+    //To work with the ListNode typing while aiming the same memory direction with a pointer anidation
+    //It has been made this way due to the impossibility to include BTree.h in UserManager since it makes an "infinite include loop"
+    extern void *user_list;
 
     User NewUser();
 

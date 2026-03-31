@@ -11,19 +11,18 @@
 
 #include "./UserManager.h"
 
-#include "../Libs/CustomLibs/BTree.h"
+#include "../Libs/CustomLibs/TList.h"
 
 //Holds the game information needed globally, that may be needed for Level/Screen management 
 namespace UserManager{
-    FILE *user_tree_dat = nullptr;
-    char *user_tree_dat_path = "./Assets/Files/Data/user_tree.dat";
+    FILE *user_list_dat = nullptr;
+    char *user_list_dat_path = "./Assets/Files/Data/user_list.dat";
     
-    //Whenever user_tree is needed, create an aux variable such as:
-    //      BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;
-    //To work with the TreeNode typing while aiming the same memory direction with a pointer anidation
-    //It has been made this way due to the impossibility to include BTree.h in UserManager since it makes an "infinite include loop"
-    void *user_tree = nullptr; 
-    int user_tree_t = 0;
+    //Whenever user_list is needed, create an aux variable such as:
+    //TList::ListNode** aux_list = (TList::ListNode**) &user_list;
+    //To work with the ListNode typing while aiming the same memory direction with a pointer anidation
+    //It has been made this way due to the impossibility to include TList.h in UserManager since it makes an "infinite include loop"
+    void *user_list = nullptr; 
 
     unsigned char kDefaultStrL = 20;
     unsigned char kAliasStrL = 3;
@@ -211,33 +210,30 @@ namespace UserManager{
             // }else{
             //     printf("LOAD NO ADMIN\n");
             // }
-            
-            user_tree_t++;
         }
 
         return aux_user;
     }
 
     bool LoadRegisteredUsers(){
-        BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;
-        bool is_loaded = LoadTree(aux_tree, BTree::TreeType::USER, user_tree_dat, user_tree_dat_path);
+        TList::ListNode** aux_list = (TList::ListNode**) &user_list;
+        bool is_loaded = TList::LoadList(aux_list, TList::ListType::USER, user_list_dat, user_list_dat_path);
 
-        // printf("%p || %p\n",*aux_tree,user_tree);
+        // printf("%p || %p\n",*aux_list,user_list);
         return is_loaded;
     }
 
     bool RegisterNewUser(User new_user){
-        BTree::TreeInfo aux_info = {NULL};
+        TList::ListInfo aux_info = {NULL};
         bool is_registered = true;
-        BTree::TreeNode** aux_tree = (BTree::TreeNode**) &user_tree;
+        TList::ListNode** aux_list = (TList::ListNode**) &user_list;
 
         aux_info.user_info = NewUser(new_user);
 
-        if(BTree::InsertTree(aux_tree, BTree::TreeType::USER, aux_info)){
+        if(TList::InsertList(aux_list, TList::ListType::USER, aux_info)){
             printf("---- REGISTERED USERS SEARCH TREE TO SAVE  ----\n");
-            BTree::PrintTree(*aux_tree,0);
-            BTree::SaveTree(aux_tree, user_tree_dat, user_tree_dat_path);
-            user_tree_t++;
+            TList::PrintList(*aux_list);
+            TList::SaveList(aux_list, user_list_dat, user_list_dat_path);
         }else{
             is_registered = false;
         }
@@ -246,6 +242,6 @@ namespace UserManager{
     }
 
     void CloseFiles(){
-        fclose(user_tree_dat);
+        fclose(user_list_dat);
     }
 }

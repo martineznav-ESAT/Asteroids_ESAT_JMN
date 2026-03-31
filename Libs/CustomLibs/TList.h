@@ -2,42 +2,60 @@
 #include <conio.h>
 #include <stdlib.h>
 
+#include "../../Code/UserManager.h"
+
 #ifndef TList_H
 #define TList_H
 
 namespace TList{
-    struct TList{
-        int info;
-        TList *next, *prev;
+    enum ListType{
+        INT,
+        CHAR,
+        USER,
     };
 
-    TList* ListCreate();
+    union ListInfo{
+        int int_info;
+        char char_info;
+        UserManager::User user_info;
+    };
 
-    bool IsEmptyList(TList **list);
+    struct ListNode{
+        ListInfo info;
+        ListType type;
+        ListNode *next, *prev;
+    };
 
-    //Añade un valor al inicio de la list
-    void ListAdd(TList **list, int v);
+    ListNode* CreateList();
 
-    //Devuelve en consola los valores de la list
-    void ListPrint(TList *list);
+    bool IsEmptyList(ListNode **list);
 
-    //Devuelve en consola los valores de la list invertidos de orden
-    void ListPrintReverted(TList *list);
+    //Adds a value at the beginning of the list
+    bool InsertList(ListNode **list, ListType type, ListInfo info);
 
-    //Devuelve el número de datos que contiene la list
-    int ListLength(TList* list);
+    //Prints the values of the list
+    void PrintList(ListNode *list);
 
-    //Devuelve nodo buscando por el valor a encontrar
-    TList* ListFind(TList *list, int info);
+    //Prints the values of the list in reverse order
+    void ReverseShowList(ListNode *list);
 
-    //Extrae de la list el nodo pasado por parametro y lo devuelve desvinculado
-    TList* ListExtract(TList **elemento_list);
+    //Returns the number of elements in the list
+    int ListLength(ListNode* list);
 
-    // //Elimina el nodo con el valor info introducido
-    void ListRemove(TList **list, int info);
+    //Searches for a node by value
+    ListNode* FindInList(ListNode *list, ListInfo info);
 
-    void EmptyList(TList **list);
+    //Extracts a node from the list and returns it detached
+    ListNode* ExtractFromList(ListNode **list_element);
+
+    //Deletes a node with the given value
+    void DeleteElement(ListNode **list, ListInfo info);
+
+    void ClearList(ListNode **list);
+
+    void SaveNode(ListNode *list, FILE *file);
+    void SaveList(ListNode **list, FILE *dat_file, char* dat_path);
+    bool LoadList(ListNode **list_to_load, ListType list_type, FILE *dat_file, char* dat_path);
 }
 
 #endif
-

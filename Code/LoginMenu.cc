@@ -11,7 +11,7 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
-#include "../Libs/CustomLibs/BTree.h"
+#include "../Libs/CustomLibs/TList.h"
 
 #include "./GameManager.h"
 #include "./UserManager.h"
@@ -27,15 +27,17 @@ namespace LoginMenu{
     int selected_item = -1;
 
     bool VerifyLogin(UserManager::User **user){
-        BTree::TreeNode* aux_tn = nullptr;
+        TList::ListNode* aux_tn = nullptr;
         bool is_verified = false;
-        BTree::TreeNode** aux_user_tree = (BTree::TreeNode**) &(UserManager::user_tree);
-        BTree::TreeInfo aux_ti = {NULL};
+        
+        TList::ListNode** aux_user_list = (TList::ListNode**) &(UserManager::user_list);
+
+        TList::ListInfo aux_ti = {NULL};
         aux_ti.user_info = UserManager::NewUser();
         strcpy(aux_ti.user_info.username, (menu_items+LoginItems::USER_TI)->item.text_item.input_text.text);
         strcpy(aux_ti.user_info.password, (menu_items+LoginItems::PASSWD_TI)->item.text_item.input_text.text);
 
-        aux_tn = BTree::FindTreeNode(*aux_user_tree, aux_ti);
+        aux_tn = TList::FindInList(*aux_user_list, aux_ti);
         if(aux_tn != nullptr){
             is_verified = (strcmp(aux_tn->info.user_info.password, aux_ti.user_info.password) == 0);
             if(is_verified){

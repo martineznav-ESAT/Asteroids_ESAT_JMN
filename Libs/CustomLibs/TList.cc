@@ -1,25 +1,27 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "./TList.h"
 
 namespace TList{
-    
-    TList* ListCreate(){
+
+    ListNode* CreateList(){
         return nullptr;
     }
 
-    bool IsEmptyList(TList **list){
+    bool IsEmptyList(ListNode **list){
         return (*list == nullptr);
     }
 
-    //Añade un valor al inicio de la list
-    void ListAdd(TList **list, int v){
-        TList *aux;
-        // printf("ListAdd\n");
-        aux = (TList*) malloc(sizeof(TList));
-        aux->info = v;
+    //Adds a value at the beginning of the list
+    bool InsertList(ListNode **list, ListType type, ListInfo info){
+        ListNode *aux;
+        // printf("InsertList\n");
+        aux = (ListNode*) malloc(sizeof(ListNode));
+        aux->info = info;
+        aux->type = type;
         aux->next = *list;
         aux->prev = nullptr;
 
@@ -28,64 +30,92 @@ namespace TList{
         }
 
         *list = aux;
+
+        return true;
     }    
 
-    //Devuelve en consola los valores de la list
-    void ListPrint(TList *list){
-        for(TList *p = list; p!=nullptr; p = p->next){
-            printf("%02d ",p->info);
+
+    //Prints the values of one ListNode
+    void PrintNodeInfo(ListNode *list){
+        switch (list->type){
+            case ListType::INT:
+                printf("%d | ",list->info.int_info);
+            break;
+        
+            case ListType::CHAR:
+                printf("%c | ",list->info.char_info);
+            break;
+
+            case ListType::USER:
+                printf("|| User %s - Passwd %s ",list->info.user_info.username, list->info.user_info.password);
+                if(list->info.user_info.is_admin){
+                    printf("A ");
+                }
+                printf("||\n");
+            break;
         }
     }
 
-    //Devuelve en consola los valores de la list invertidos de orden
-    void ListPrintReverted(TList *list){
-        TList *aux = nullptr;
-        //Recorro en primera instancia para asignar a aux el valor del nodo de la cola
+    //Prints the values of the whole list
+    void PrintList(ListNode *list){
+        for(ListNode *p = list; p!=nullptr; p = p->next){
+            PrintNodeInfo(p);
+        }
+    }
+
+    //Prints the values of the list in reverse order
+    void ReverseShowList(ListNode *list){
+        ListNode *aux = nullptr;
+        //First traversal to get the tail node
         for(aux = list; aux->next != nullptr; aux = aux->next);
 
-        //Recorro en segunda instancia a la inversa desde aux mostrando por consola la info
+        //Second traversal backwards printing info
         while(aux != nullptr){
-            printf("%02d ",aux->info);
+            PrintNodeInfo(aux);
             aux = aux->prev;
         }
     }
 
-    //Devuelve el número de datos que contiene la list
-    int ListLength(TList* list){
+    //Returns the number of elements in the list
+    int ListLength(ListNode* list){
         int res = 0;
 
-        for(TList *p = list; p!=nullptr; p = p->next){
+        for(ListNode *p = list; p!=nullptr; p = p->next){
             res++;
         }
 
         return res;
     }
 
-    //Devuelve nodo buscando por el valor a encontrar
-    TList* ListFind(TList *list, int info){
-        TList *aux = nullptr;
+    //Searches for a node by value
+    ListNode* FindInList(ListNode *list, ListInfo info){
+        ListNode *aux = nullptr;
 
-        // printf("\n-----Buscando %d\n",info);
+        // printf("\n-----Searching %d\n",info);
 
-        for(aux = list; aux != nullptr && aux->info != info ; aux = aux->next);
-
-        if(info == 25 || info == 4){
-            if(aux == nullptr){
-                printf("NO ENCONTRADO -----\n");
-            }else{
-                printf("ENCONTRADO %p -----\n",aux);
-            }
-        }
+        switch (list->type){
+            case ListType::INT:
+                for(aux = list; aux != nullptr && aux->info.int_info != info.int_info; aux = aux->next);
+            break;
         
+            case ListType::CHAR:
+                for(aux = list; aux != nullptr && aux->info.char_info != info.char_info; aux = aux->next);
+            break;
+
+            case ListType::USER:
+                for(aux = list; aux != nullptr && strcmp(aux->info.user_info.username, info.user_info.username) == 0; aux = aux->next);
+            break;
+        }
+
 
         return aux;
     }
 
-    //Extrae de la list el nodo pasado por parametro y lo devuelve desvinculado
-    TList* ListExtract(TList **elemento_list){
-        TList *aux_act = *elemento_list;
-        TList *aux_next = (*elemento_list)->next;
-        TList *aux_prev = (*elemento_list)->prev;
+    //Extracts a node from the list and returns it detached
+    ListNode* ExtractFromList(ListNode **list_element){
+        ListNode *aux_act = *list_element;
+        ListNode *aux_next = (*list_element)->next;
+        ListNode *aux_prev = (*list_element)->prev;
 
         if(aux_prev != nullptr){
             aux_prev->next = aux_next;
@@ -94,41 +124,115 @@ namespace TList{
             aux_next->prev = aux_prev;
         }
 
-        (*elemento_list)->next = nullptr;
-        (*elemento_list)->prev = nullptr;
+        (*list_element)->next = nullptr;
+        (*list_element)->prev = nullptr;
 
         if(aux_prev == nullptr){
-            *elemento_list = aux_next;
+            *list_element = aux_next;
         }
         
         return aux_act;
     }
 
-    // //Elimina el nodo con el valor info introducido
-    void ListRemove(TList **list, int info){
-        // printf("EliminaEnLista\n");
+    //Deletes a node with the given value
+    void DeleteElement(ListNode **list, ListInfo info){
+        // printf("DeleteFromList\n");
         
-        TList *aux = ListFind(*list, info);
+        ListNode *aux = FindInList(*list, info);
 
-        //Comprueba si existe
+        //Check if exists
         if(IsEmptyList(&aux)){
-            printf(" >>> No encontrado en list\n");
+            printf(" >>> Not found in list\n");
         }else{
-            //Si existe lo extrae de la list;
+            //If exists, extract it
             if(aux == *list){
-                aux = ListExtract(list);
+                aux = ExtractFromList(list);
             }else{
-                aux = ListExtract(&aux);
+                aux = ExtractFromList(&aux);
             }
 
-            //Y Libera la memoria de la extraida que se quiere eliminar, eliminandola por completo
+            //Free memory
             free(aux);
         }
     }
 
-    void EmptyList(TList **list){
-        for(TList *act = *list; !IsEmptyList(list); act = *list){
-            ListExtract(list);
+    void ClearList(ListNode **list){
+        for(ListNode *act = *list; !IsEmptyList(list); act = *list){
+            ExtractFromList(list);
         }
+    }
+
+    void SaveNode(ListNode *list, FILE *file){
+        if(file != NULL && !IsEmptyList(&list)){
+            fwrite(&(list->type), sizeof(list->type), 1, file);
+
+            switch (list->type){
+                case ListType::INT:
+                    fwrite(&(list->info.int_info), sizeof(list->info.int_info), 1, file);
+                break;
+            
+                case ListType::CHAR:
+                    fwrite(&(list->info.char_info), sizeof(list->info.char_info), 1, file);
+                break;
+
+                case ListType::USER:
+                    UserManager::SaveUser(list->info.user_info, file);
+                break;
+            }
+        }
+    }
+
+    void SaveList(ListNode **list, FILE *dat_file, char* dat_path){
+        dat_file = fopen(dat_path, "wb");
+        for(ListNode *p = *list; p!=nullptr; p = p->next){
+            SaveNode(p, dat_file);
+        }
+        fclose(dat_file);
+    }
+
+    bool LoadList(ListNode **list_to_load, ListType list_type, FILE *dat_file, char* dat_path){
+        bool is_loaded = true;
+        *list_to_load = CreateList();
+        ListType aux_type;
+        //Initialize "empty" info
+        ListInfo aux_info = {NULL};
+
+        // Check file before reading
+        if((dat_file = fopen(dat_path,"rb")) == NULL){
+            printf("ERROR NOT FOUND: \n%s\n",dat_path);
+            is_loaded = false;
+        }else{
+            //If the read type is different than the parameter intended, fails to read file 
+            //Following C logic, the while conditional should execute the fread before aux_type comparison. 
+            //So the aux_type == list_type comparison should always be properly executed
+            while (fread(&aux_type, sizeof(ListType), 1, dat_file) && aux_type == list_type){
+                switch (list_type){
+                    case ListType::INT:
+                        fread(&(aux_info.int_info), sizeof(aux_info.int_info), 1, dat_file);
+                    break;
+                
+                    case ListType::CHAR:
+                        fread(&(aux_info.char_info), sizeof(aux_info.char_info), 1, dat_file);
+                    break;
+
+                    case ListType::USER:
+                        aux_info.user_info = UserManager::LoadUser(dat_file);
+                    break;
+                }
+                // printf("LOADED\n");
+                InsertList(list_to_load, list_type, aux_info);
+            }
+
+            if(aux_type != list_type){
+                is_loaded = false;
+            }else{
+                printf("---- REGISTERED USERS LOADED SEARCH TREE ----\n");
+                PrintList(*list_to_load);
+            }
+
+            fclose(dat_file);
+        }
+
+        return is_loaded;
     }
 }

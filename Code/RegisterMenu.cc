@@ -11,6 +11,7 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
+#include "../Libs/CustomLibs/TList.h"
 
 #include "./GameManager.h"
 #include "./UserManager.h"
@@ -483,11 +484,12 @@ namespace RegisterMenu{
 
     //Based on the level/screen you come from, the Register Menu will be loaded differently
     void Load(GameManager::Level level_p){
-        prev_level = level_p;
         GameManager::game_status.level = GameManager::Level::REGISTER_MENU;
+        
+        prev_level = level_p;
 
-        if(UserManager::user_tree_t <= 0){
-            //First ever game exexution opens ADMIN REGISTRATION 
+        if(TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0){
+            //First ever game execution opens ADMIN REGISTRATION 
             (menu_items+((int)RegisterItems::ADMIN_CHK))->item.chk_item.is_checked = true;
             (menu_items+((int)RegisterItems::BACK_BTN))->item.btn_item.is_visible = false;
 
@@ -509,7 +511,11 @@ namespace RegisterMenu{
     bool IsUneditable(RegisterItems r_item){
         return (
             (r_item == RegisterItems::CREDITS_TI || r_item == RegisterItems::ADMIN_CHK) &&
-            (UserManager::user_tree_t <= 0 || GameManager::game_status.logged_user == nullptr || !((GameManager::game_status.logged_user)->is_admin))
+            (
+                TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0 || 
+                GameManager::game_status.logged_user == nullptr || 
+                !((GameManager::game_status.logged_user)->is_admin)
+            )
         );
     }
 
