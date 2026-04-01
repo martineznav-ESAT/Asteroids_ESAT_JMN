@@ -26,7 +26,6 @@ void InitGame(){
     PlayMenu::Init();
     HighscoresMenu::Init();
     AdminMenu::Init();
-
     GameManager::LoadInitLevel();
 }
 

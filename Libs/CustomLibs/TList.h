@@ -36,6 +36,10 @@ namespace TList{
     //Prints the values of the list
     void PrintList(ListNode *list);
 
+    ListNode* GetLastListNode(ListNode *list);
+
+    ListNode* GetIndexListNode(ListNode *list, int index);
+
     //Prints the values of the list in reverse order
     void ReverseShowList(ListNode *list);
 

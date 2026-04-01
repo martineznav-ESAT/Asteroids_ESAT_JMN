@@ -147,6 +147,7 @@ namespace PlayMenu{
 
     //Loads the play menu
     void Load(){
+        selected_item = -1;
         GameManager::game_status.level = GameManager::Level::PLAY_MENU;
     }
 

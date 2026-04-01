@@ -85,6 +85,7 @@ namespace HighscoresMenu{
 
     //Loads the highscores menu
     void Load(){
+        selected_item = -1;
         GameManager::game_status.level = GameManager::Level::HIGHSCORES_MENU;
     }
 

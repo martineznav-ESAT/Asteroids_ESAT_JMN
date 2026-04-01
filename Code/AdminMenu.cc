@@ -11,6 +11,7 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
+#include "../Libs/CustomLibs/TList.h"
 
 #include "./GameManager.h"
 #include "./AdminMenu.h"
@@ -21,31 +22,52 @@ namespace AdminMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
     UILib::UI_Item *menu_items = nullptr;
     int selected_item = -1;
-    int user_page = 0;
+    
+    TList::ListNode *user_page = nullptr;
+    int page_number = 0;
     bool is_last_page = false;
-
-    UserManager::User *page_users = nullptr;
 
     //ACTIONS
     void EditAction(void *u){
-        printf("EDIT ACTION %d WIP\n",((UserManager::User*)u)->credits);
+        printf("EDIT ACTION %s WIP\n",((UserManager::User*)u)->username);
     }
 
     void DeleteAction(void *u){
-        printf("DELETE ACTION %d WIP\n",((UserManager::User*)u)->credits);
+        printf("DELETE ACTION %s WIP\n",((UserManager::User*)u)->username);
+    }
+
+    //Loads de users for the specific page. 
+    //More precisely, puts the ListNode corresponding to the user_page delivered as parameter as the head of the page 
+    //and updates the corresponding buttons.
+    void LoadUserPage(int page = 0){
+        TList::ListNode** aux_list = (TList::ListNode**) &(UserManager::user_list);
+        TList::ListNode *aux_user_node = nullptr;
+
+        user_page = TList::GetIndexListNode((TList::ListNode*) *aux_list, page_number*10);
+
+        for(int i = 0, u = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
+            aux_user_node = TList::GetIndexListNode(user_page,u);
+            (menu_items+i)->item.btn_pa_item.is_visible = u<TList::ListLength(user_page);
+            if((menu_items+i)->item.btn_pa_item.is_visible){
+                (menu_items+i)->item.btn_pa_item.action_p = &(aux_user_node->info.user_info);
+            }
+            
+            if(i%2 != 0){
+                u++;
+            }
+        }
+
+        is_last_page = (page_number+1)*10 >= TList::ListLength(user_page);
     }
 
     void PrevPageAction(){
-        user_page--;
-        is_last_page = user_page >= 3;
-        printf("PREV_PAGE ACTION %d WIP\n",user_page);
+        page_number--;
+        LoadUserPage(page_number);
     }
 
     void NextPageAction(){
-        //TO_DO Comprobar si hay mas usuarios
-        user_page++;
-        is_last_page = user_page >= 3;
-        printf("NEXT_PAGE ACTION %d WIP\n",user_page);
+        page_number++;
+        LoadUserPage(page_number);
     }
 
     void CreateAction(){
@@ -62,6 +84,7 @@ namespace AdminMenu{
     void InitButtons(){
         Utils::Color text_color = {255,255,255,255};
         float list_font_size = Utils::kBaseFontSize;
+        TList::ListNode *aux_user_node = nullptr;
 
         JMATH::Vec2 base_button_coord = {
             (Utils::kWindowWidth) - (strlen("EDIT DELETE  ") * list_font_size),
@@ -76,6 +99,7 @@ namespace AdminMenu{
 
         //USER MANAGEMENT BUTTONS
         for(int i = 0, u = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
+            aux_user_node = TList::GetIndexListNode(user_page,u);
             if(i%2 == 0){
                 UILib::InitButtonPA(
                     &((menu_items+i)->item.btn_pa_item),
@@ -90,9 +114,9 @@ namespace AdminMenu{
                         (menu_items+i)->item_name.text,
                         list_font_size
                     },
-                    true,
+                    aux_user_node != nullptr,
                     EditAction,
-                    (page_users+u)
+                    (aux_user_node == nullptr ? nullptr : &(aux_user_node->info.user_info))
                 );
             }else{
                 UILib::InitButtonPA(
@@ -108,9 +132,9 @@ namespace AdminMenu{
                         (menu_items+i)->item_name.text,
                         list_font_size
                     },
-                    true,
+                    aux_user_node != nullptr,
                     DeleteAction,
-                    (page_users+u)
+                    (aux_user_node == nullptr ? nullptr : &(aux_user_node->info.user_info))
                 );
 
                 u++;
@@ -236,34 +260,8 @@ namespace AdminMenu{
         );
     }
 
-    void LoadUserPage(int page = 0){
-        //TO_DO LOAD REAL USERS
-
-        for(unsigned char i = 0; i < 10; i++){
-            *(page_users+i) = {
-                "USER",
-                "password",
-                "AAA",
-                "EMAIL@MAIL.COM",
-                "NAME",
-                "SURNAME",
-                22,01,2003,
-                "SPAIN",
-                "VALENCIA",
-                i,
-                i == 5
-            };
-        }
-    }
-
-    void InitUserPage(){
-        page_users = (UserManager::User*) malloc(sizeof(UserManager::User)*10);
-        LoadUserPage();
-    }
-
     //Whole Admin Menu initializer
     void Init(){
-        InitUserPage();
         InitMenuItems();
         InitButtons();
     }
@@ -272,6 +270,8 @@ namespace AdminMenu{
 
     //Loads the Admin menu
     void Load(){
+        LoadUserPage();
+        selected_item = -1;
         GameManager::game_status.level = GameManager::Level::ADMIN_MENU;
     }
 
@@ -307,7 +307,7 @@ namespace AdminMenu{
         for(int i = 0; i < (int)AdminMenuItems::TOTAL_ITEMS; i++){
             switch((AdminMenuItems)i){
                 case AdminMenuItems::PREV_PAG_BTN:
-                    if(user_page > 0){
+                    if(page_number > 0){
                         UILib::UpdateItem(menu_items+i, &selected_item, i);
                     }
                 break;
@@ -382,6 +382,15 @@ namespace AdminMenu{
         
     }
 
+    void DrawUserItems(JMATH::Vec2 base_coord, JMATH::Vec2 margin_v, float list_font_size){
+        TList::ListNode* aux_list = user_page;
+
+        //Starts with 1 to apply margin from the begining and draws a maximum of 10
+        for(int i = 0; aux_list != nullptr && i < 10; aux_list = aux_list->next ,i++){
+            DrawUserItem(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i+1)), list_font_size, aux_list->info.user_info);
+        }
+    }
+
     void DrawUserList(){
         float list_font_size = Utils::kBaseFontSize * 1.5f;
 
@@ -401,17 +410,14 @@ namespace AdminMenu{
             }
         );
 
-        //Starts with 1 to apply margin from the beghining
-        for(int i = 0; i < 10; i++){
-            DrawUserItem(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i+1)), list_font_size, *(page_users+i));
-        }
+        DrawUserItems(base_coord, margin_v, list_font_size);
     }
 
     void DrawMenuItems(){
         for(int i = 0; i < (int)AdminMenuItems::TOTAL_ITEMS; i++){
             switch((AdminMenuItems)i){
                 case AdminMenuItems::PREV_PAG_BTN:
-                    if(user_page <= 0){
+                    if(page_number <= 0){
                         (menu_items+i)->item.btn_item.is_visible = false;
                     }else{
                         (menu_items+i)->item.btn_item.is_visible = true;

@@ -15,23 +15,52 @@ namespace TList{
         return (*list == nullptr);
     }
 
-    //Adds a value at the beginning of the list
-    bool InsertList(ListNode **list, ListType type, ListInfo info){
-        ListNode *aux;
-        // printf("InsertList\n");
-        aux = (ListNode*) malloc(sizeof(ListNode));
-        aux->info = info;
-        aux->type = type;
-        aux->next = *list;
-        aux->prev = nullptr;
+    //Searches for a node by value
+    ListNode* FindInList(ListNode *list, ListInfo info){
+        ListNode *aux = nullptr;
 
-        if(*list != nullptr){
-            (*list)->prev = aux;
+        switch (list->type){
+            case ListType::INT:
+                for(aux = list; aux != nullptr && aux->info.int_info != info.int_info; aux = aux->next);
+            break;
+        
+            case ListType::CHAR:
+                for(aux = list; aux != nullptr && aux->info.char_info != info.char_info; aux = aux->next);
+            break;
+
+            case ListType::USER:
+                // printf("\n-----Searching %s in\n",info.user_info.username);
+                // PrintList(list);
+                for(aux = list; aux != nullptr && strcmp(aux->info.user_info.username, info.user_info.username) != 0; aux = aux->next);
+            break;
         }
 
-        *list = aux;
 
-        return true;
+        return aux;
+    }
+
+    //Adds a value at the beginning of the list
+    bool InsertList(ListNode **list, ListType type, ListInfo info){
+        bool is_inserted = true;
+        if(!IsEmptyList(list) && FindInList(*list, info)){
+            is_inserted = false;
+        }else{
+            ListNode *aux;
+            // printf("InsertList\n");
+            aux = (ListNode*) malloc(sizeof(ListNode));
+            aux->info = info;
+            aux->type = type;
+            aux->next = *list;
+            aux->prev = nullptr;
+
+            if(*list != nullptr){
+                (*list)->prev = aux;
+            }
+
+            *list = aux;
+        }
+
+        return is_inserted;
     }    
 
 
@@ -63,11 +92,22 @@ namespace TList{
         }
     }
 
+    ListNode* GetLastListNode(ListNode *list){
+        ListNode *aux = nullptr;
+        for(aux = list; aux->next != nullptr; aux = aux->next);
+        return aux;
+    }
+
+    ListNode* GetIndexListNode(ListNode *list, int index){
+        ListNode *aux = nullptr;
+        int i = 0;
+        for(aux = list; aux != nullptr && i != index; aux = aux->next, i++);
+        return aux;
+    }
+
     //Prints the values of the list in reverse order
     void ReverseShowList(ListNode *list){
-        ListNode *aux = nullptr;
-        //First traversal to get the tail node
-        for(aux = list; aux->next != nullptr; aux = aux->next);
+        ListNode *aux = GetLastListNode(list);
 
         //Second traversal backwards printing info
         while(aux != nullptr){
@@ -85,30 +125,6 @@ namespace TList{
         }
 
         return res;
-    }
-
-    //Searches for a node by value
-    ListNode* FindInList(ListNode *list, ListInfo info){
-        ListNode *aux = nullptr;
-
-        // printf("\n-----Searching %d\n",info);
-
-        switch (list->type){
-            case ListType::INT:
-                for(aux = list; aux != nullptr && aux->info.int_info != info.int_info; aux = aux->next);
-            break;
-        
-            case ListType::CHAR:
-                for(aux = list; aux != nullptr && aux->info.char_info != info.char_info; aux = aux->next);
-            break;
-
-            case ListType::USER:
-                for(aux = list; aux != nullptr && strcmp(aux->info.user_info.username, info.user_info.username) == 0; aux = aux->next);
-            break;
-        }
-
-
-        return aux;
     }
 
     //Extracts a node from the list and returns it detached
@@ -183,8 +199,11 @@ namespace TList{
     }
 
     void SaveList(ListNode **list, FILE *dat_file, char* dat_path){
+        ListNode *aux = GetLastListNode(*list);
         dat_file = fopen(dat_path, "wb");
-        for(ListNode *p = *list; p!=nullptr; p = p->next){
+
+        //Saved backwards to mantain consistency when loaded again
+        for(ListNode *p = aux; p!=nullptr; p = p->prev){
             SaveNode(p, dat_file);
         }
         fclose(dat_file);
@@ -221,12 +240,13 @@ namespace TList{
                 }
                 // printf("LOADED\n");
                 InsertList(list_to_load, list_type, aux_info);
+                // printf("INSERTED\n");
             }
 
             if(aux_type != list_type){
                 is_loaded = false;
             }else{
-                printf("---- REGISTERED USERS LOADED SEARCH TREE ----\n");
+                printf("---- REGISTERED USERS LOADED LIST ----\n");
                 PrintList(*list_to_load);
             }
 

@@ -176,6 +176,8 @@ namespace MainMenu{
 
     //Loads the main menu
     void Load(){
+        selected_item = -1;
+        
         if (GameManager::game_status.logged_user != nullptr && (GameManager::game_status.logged_user)->is_admin){
             (menu_items+MainMenuItems::ADMIN_BTN)->item.btn_item.is_visible = true;
         }else{

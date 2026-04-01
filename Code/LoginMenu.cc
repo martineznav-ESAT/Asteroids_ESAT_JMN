@@ -294,6 +294,7 @@ namespace LoginMenu{
     //Based on the level/screen you come from, the Login Menu will be loaded differently
     void Load(GameManager::Level level_p){
         prev_level = level_p;
+        selected_item = -1;
         CleanForm();
         switch(level_p){
             case GameManager::Level::PLAY_MENU:

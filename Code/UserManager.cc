@@ -231,7 +231,7 @@ namespace UserManager{
         aux_info.user_info = NewUser(new_user);
 
         if(TList::InsertList(aux_list, TList::ListType::USER, aux_info)){
-            printf("---- REGISTERED USERS SEARCH TREE TO SAVE  ----\n");
+            printf("---- REGISTERED USERS LIST TO SAVE  ----\n");
             TList::PrintList(*aux_list);
             TList::SaveList(aux_list, user_list_dat, user_list_dat_path);
         }else{

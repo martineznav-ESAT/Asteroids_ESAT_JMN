@@ -176,7 +176,7 @@ namespace RegisterMenu{
         UILib::InitTextInput(
             &((menu_items + ((int)RegisterItems::ALIAS_TI))->item.text_item),
             {JMATH::Vec2Sum(first_left_side.P1, JMATH::Vec2Scale(margin_y,2)),JMATH::Vec2Sum(first_left_side.P2, JMATH::Vec2Scale(margin_y,2))},
-            {JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,2)),JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,2))},
+            {JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,2)),JMATH::Vec2Sum(JMATH::Vec2Sum(first_right_side.P1,{ti_font_size*3.5f,40}), JMATH::Vec2Scale(margin_y,2))},
             {255,255,255,255},
             {0,0,0,255},
             {{255,255,255,255},nullptr, ti_font_size},
@@ -486,6 +486,7 @@ namespace RegisterMenu{
     void Load(GameManager::Level level_p){
         GameManager::game_status.level = GameManager::Level::REGISTER_MENU;
         
+        selected_item = -1;
         prev_level = level_p;
 
         if(TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0){
