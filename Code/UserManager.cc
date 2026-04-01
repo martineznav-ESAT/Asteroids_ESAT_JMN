@@ -15,6 +15,14 @@
 
 //Holds the game information needed globally, that may be needed for Level/Screen management 
 namespace UserManager{
+    const unsigned char kDefaultStrL = 20;
+    const unsigned char kAliasStrL = 3;
+    const unsigned char kEmailStrL = 40;
+    const unsigned char kDOBDayL = 2;
+    const unsigned char kDOBMonthL = 2;
+    const unsigned char kDOBYearL = 4;
+    const unsigned char kCreditsStrL = 2;
+
     FILE *user_list_dat = nullptr;
     char *user_list_dat_path = "./Assets/Files/Data/user_list.dat";
     
@@ -23,15 +31,7 @@ namespace UserManager{
     //To work with the ListNode typing while aiming the same memory direction with a pointer anidation
     //It has been made this way due to the impossibility to include TList.h in UserManager since it makes an "infinite include loop"
     void *user_list = nullptr; 
-
-    unsigned char kDefaultStrL = 20;
-    unsigned char kAliasStrL = 3;
-    unsigned char kEmailStrL = 40;
-    unsigned char kDOBDayL = 2;
-    unsigned char kDOBMonthL = 2;
-    unsigned char kDOBYearL = 4;
-    unsigned char kCreditsStrL = 2;
-
+    
     User NewUser(){
         User new_user;
         new_user.username = (char*) malloc(sizeof(char)*(kDefaultStrL+1));

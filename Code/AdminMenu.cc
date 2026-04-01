@@ -14,6 +14,7 @@
 #include "../Libs/CustomLibs/TList.h"
 
 #include "./GameManager.h"
+#include "./UserManager.h"
 #include "./AdminMenu.h"
 #include "./MainMenu.h"
 #include "./RegisterMenu.h"
@@ -22,22 +23,13 @@ namespace AdminMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
     UILib::UI_Item *menu_items = nullptr;
     int selected_item = -1;
-    
+
     TList::ListNode *user_page = nullptr;
     int page_number = 0;
     bool is_last_page = false;
 
-    //ACTIONS
-    void EditAction(void *u){
-        printf("EDIT ACTION %s WIP\n",((UserManager::User*)u)->username);
-    }
-
-    void DeleteAction(void *u){
-        printf("DELETE ACTION %s WIP\n",((UserManager::User*)u)->username);
-    }
-
-    //Loads de users for the specific page. 
-    //More precisely, puts the ListNode corresponding to the user_page delivered as parameter as the head of the page 
+    //Loads de users for the specific page.
+    //More precisely, puts the ListNode corresponding to the user_page delivered as parameter as the head of the page
     //and updates the corresponding buttons.
     void LoadUserPage(int page = 0){
         TList::ListNode** aux_list = (TList::ListNode**) &(UserManager::user_list);
@@ -51,13 +43,34 @@ namespace AdminMenu{
             if((menu_items+i)->item.btn_pa_item.is_visible){
                 (menu_items+i)->item.btn_pa_item.action_p = &(aux_user_node->info.user_info);
             }
-            
+
             if(i%2 != 0){
                 u++;
             }
         }
 
-        is_last_page = (page_number+1)*10 >= TList::ListLength(user_page);
+        is_last_page = TList::ListLength(user_page) <= 10;
+    }
+
+    //ACTIONS
+    void EditAction(void *u){
+        printf("EDIT ACTION %s WIP\n",((UserManager::User*)u)->username);
+    }
+
+    void DeleteAction(void *u){
+        TList::ListNode** aux_list = (TList::ListNode**) &(UserManager::user_list);
+        TList::ListInfo aux_info = {NULL};
+        aux_info.user_info = *((UserManager::User*) u);
+        
+        if(TList::ListLength(user_page) <= 1){
+            //The actual page will be empty. So before deleting the element
+            //nd update/save the deletion, the previous page is loaded 
+            //so user_page does not miss its pointer
+            LoadUserPage(--page_number);
+        }
+        TList::DeleteElement(aux_list, aux_info);
+        TList::SaveList(aux_list, UserManager::user_list_dat, UserManager::user_list_dat_path);
+        LoadUserPage(page_number);
     }
 
     void PrevPageAction(){
@@ -73,7 +86,7 @@ namespace AdminMenu{
     void CreateAction(){
         RegisterMenu::Load(GameManager::Level::ADMIN_MENU);
     }
-    
+
     void BackAction(){
         MainMenu::Load();
     }
@@ -208,7 +221,7 @@ namespace AdminMenu{
             true,
             BackAction
         );
-        
+
     }
 
 
@@ -282,7 +295,7 @@ namespace AdminMenu{
 
         //Unselect Menu item on click
         //Since its the first click event registered, there's no need to check for collision
-        //If later on a collision with the same input its located, the selected_item will be 
+        //If later on a collision with the same input its located, the selected_item will be
         //overriden to the proper value
         if(esat::MouseButtonDown(0)){
             selected_item = -1;
@@ -303,7 +316,7 @@ namespace AdminMenu{
                 ++selected_item %= (int)AdminMenuItems::TOTAL_ITEMS;
             }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
         }
-        
+
         for(int i = 0; i < (int)AdminMenuItems::TOTAL_ITEMS; i++){
             switch((AdminMenuItems)i){
                 case AdminMenuItems::PREV_PAG_BTN:
@@ -330,11 +343,11 @@ namespace AdminMenu{
             "REGISTERED USERS",
             Utils::kBaseFontSize*3.5f
         };
-        
+
         esat::DrawSetTextFont("./Assets/Fonts/Neuropol.otf");
         UILib::DrawText(
             (Utils::kWindowWidth*0.5f) - ((strlen(title.text)*0.425)*title.font_size),
-            100, 
+            100,
             title
         );
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
@@ -342,7 +355,7 @@ namespace AdminMenu{
 
     void DrawUserItem(JMATH::Vec2 coord, float font_size, UserManager::User user){
         UILib::DrawText(
-            coord, 
+            coord,
             {
                 {255,255,255,255},
                 user.username,
@@ -351,7 +364,7 @@ namespace AdminMenu{
         );
 
         UILib::DrawText(
-            JMATH::Vec2Sum(coord, {font_size*strlen("0123456789    "),0}), 
+            JMATH::Vec2Sum(coord, {font_size*strlen("0123456789    "),0}),
             {
                 {255,255,255,255},
                 user.alias,
@@ -360,7 +373,7 @@ namespace AdminMenu{
         );
 
         UILib::DrawIntToText(
-            JMATH::Vec2Sum(coord, {font_size*strlen("0123456789   ALIAS  "),0}), 
+            JMATH::Vec2Sum(coord, {font_size*strlen("0123456789   ALIAS  "),0}),
             {
                 {255,255,255,255},
                 nullptr,
@@ -371,7 +384,7 @@ namespace AdminMenu{
 
         if(user.is_admin){
             UILib::DrawText(
-                JMATH::Vec2Sum(coord, {font_size*strlen("0123456789   ALIAS  CREDITS"),0}), 
+                JMATH::Vec2Sum(coord, {font_size*strlen("0123456789   ALIAS  CREDITS"),0}),
                 {
                     {255,255,255,255},
                     "X",
@@ -379,7 +392,7 @@ namespace AdminMenu{
                 }
             );
         }
-        
+
     }
 
     void DrawUserItems(JMATH::Vec2 base_coord, JMATH::Vec2 margin_v, float list_font_size){
@@ -395,7 +408,7 @@ namespace AdminMenu{
         float list_font_size = Utils::kBaseFontSize * 1.5f;
 
         JMATH::Vec2 base_coord = {
-            (Utils::kWindowWidth*0.5f) - 
+            (Utils::kWindowWidth*0.5f) -
             (strlen("USERNAME             ALIAS   CREDITS   ADMIN") * 0.45f * list_font_size),
             200
         };

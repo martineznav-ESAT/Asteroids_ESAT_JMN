@@ -30,13 +30,17 @@ namespace UserManager{
         bool is_admin = false;
     };
 
-    extern unsigned char kDefaultStrL;
-    extern unsigned char kAliasStrL;
-    extern unsigned char kEmailStrL;
-    extern unsigned char kCreditsStrL;
-    extern unsigned char kDOBDayL;
-    extern unsigned char kDOBMonthL;
-    extern unsigned char kDOBYearL;
+    extern const unsigned char kDefaultStrL;
+    extern const unsigned char kAliasStrL;
+    extern const unsigned char kEmailStrL;
+    extern const unsigned char kCreditsStrL;
+    extern const unsigned char kDOBDayL;
+    extern const unsigned char kDOBMonthL;
+    extern const unsigned char kDOBYearL;
+
+    extern FILE *user_list_dat;
+    extern char *user_list_dat_path;
+    
 
     //Whenever user_list is needed, create an aux variable such as:
     //TList::ListNode** aux_list = (TList::ListNode**) &user_list;
