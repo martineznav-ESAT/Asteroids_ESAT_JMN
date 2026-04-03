@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <string.h>
 
 #include "./Utils.h"
 
@@ -71,5 +72,23 @@ namespace Utils{
         esat::DrawSolidPath(&(draw_coords->x), 5);
 
         free(draw_coords);
+    }
+
+    int FindCharIndexInString(char* string, char find_char){
+        int count;
+        bool is_found = false;
+        for (count = 0; count < strlen(string) && !(is_found = (*(string+count) == find_char)) ; count++);
+        if(!is_found){
+            count = -1;
+        }
+        return count;
+    }
+
+    //Fills the string with the character used as parameter up to the introduced limit
+    //Limit -1 implies the whole text will be filled
+    void StringFillWithChar(char* string, int str_length, char character, int limit = -1){
+        for(int i = 0; i < str_length && i < limit; i++){
+            *(string+i) = character;
+        }
     }
 }

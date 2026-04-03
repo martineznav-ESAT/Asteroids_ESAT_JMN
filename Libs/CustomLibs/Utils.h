@@ -48,6 +48,12 @@ namespace Utils{
     bool MouseInCollider(Collider c);
 
     void DrawCollider(Collider c, Color border_color, Color fill_color);
+
+    int FindCharIndexInString(char* string, char find_char);
+
+    //Fills the string with the character used as parameter up to the introduced limit
+    //Limit -1 implies the whole text will be filled
+    void StringFillWithChar(char* string, int str_length, char character, int limit);
 }
 
 #endif

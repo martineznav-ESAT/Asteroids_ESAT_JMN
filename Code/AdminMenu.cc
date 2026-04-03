@@ -54,7 +54,7 @@ namespace AdminMenu{
 
     //ACTIONS
     void EditAction(void *u){
-        printf("EDIT ACTION %s WIP\n",((UserManager::User*)u)->username);
+        RegisterMenu::Load(GameManager::Level::ADMIN_MENU, (UserManager::User*) u);
     }
 
     void DeleteAction(void *u){

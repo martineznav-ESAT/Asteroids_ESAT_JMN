@@ -38,7 +38,7 @@ namespace RegisterMenu{
 
     void Init();
 
-    void Load(GameManager::Level prev_level);
+    void Load(GameManager::Level prev_level, UserManager::User *user_edit = nullptr);
 
     void Update();
 

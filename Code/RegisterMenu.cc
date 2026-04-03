@@ -25,7 +25,9 @@ namespace RegisterMenu{
     UILib::UI_Item *menu_items = nullptr;
     GameManager::Level prev_level;
     int selected_item = -1;
+    bool edit_mode = false;
     UserManager::User form_user;
+    UserManager::User* form_user_edit;
 
     //ACTIONS
 
@@ -461,10 +463,10 @@ namespace RegisterMenu{
         strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text, "\0");
         strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.pointer, "|\0");
 
-        strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text, "01\0");
+        strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text, "1\0");
         strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.pointer, "  |\0");
         
-        strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text, "01\0");
+        strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text, "1\0");
         strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.pointer, "  |\0");
         
         strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text, "1979\0");
@@ -482,8 +484,65 @@ namespace RegisterMenu{
         (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = is_admin;
     }
 
+    void AdjustPointerLength(UILib::TextInput* ti){
+        // printf("ADJUST %d\n",strlen(ti->input_text.text));
+        Utils::StringFillWithChar(ti->pointer, UserManager::kDefaultStrL,' ', strlen(ti->input_text.text));
+
+        *(ti->pointer+strlen(ti->input_text.text)) = '|';
+        *(ti->pointer+strlen(ti->input_text.text)+1) = '\0';
+    }
+
+    void LoadFormUserEdit(UserManager::User *user_edit){
+        form_user_edit = user_edit;
+        strcpy((menu_items + RegisterItems::USERNAME_TI)->item.text_item.input_text.text, form_user_edit->username);
+        AdjustPointerLength(&((menu_items + RegisterItems::USERNAME_TI)->item.text_item));
+
+        strcpy((menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text, form_user_edit->password);
+        AdjustPointerLength(&((menu_items + RegisterItems::PASSWORD_TI)->item.text_item));
+        
+        strcpy((menu_items + RegisterItems::ALIAS_TI)->item.text_item.input_text.text, form_user_edit->alias);
+        AdjustPointerLength(&((menu_items + RegisterItems::ALIAS_TI)->item.text_item));
+        
+        //Checks if there's a registered email
+        if(Utils::FindCharIndexInString(form_user_edit->email,'@') <= 0){
+            //Fills it empty
+            strcpy((menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text, "\0");
+        }else{
+            //Copy content before @ and forces end of word at @ location for the text input
+            strncpy((menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text, form_user_edit->email, Utils::FindCharIndexInString(form_user_edit->email,'@'));
+            *((menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text+Utils::FindCharIndexInString(form_user_edit->email,'@')) = '\0';
+        }
+        AdjustPointerLength(&((menu_items + RegisterItems::EMAIL_TI)->item.text_item));
+        
+        // strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text, "\0");
+        // strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.pointer, "|\0");
+        
+        // strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text, "\0");
+        // strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.pointer, "|\0");
+
+        // strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text, "01\0");
+        // strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.pointer, "  |\0");
+        
+        // strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text, "01\0");
+        // strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.pointer, "  |\0");
+        
+        // strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text, "1979\0");
+        // strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.pointer, "    |\0");
+
+        // strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text, "\0");
+        // strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.pointer, "|\0");
+        
+        // strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text, "\0");
+        // strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.pointer, "|\0");
+
+        // strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text, "3\0");
+        // strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.pointer, " |\0");
+        
+        // (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = is_admin;
+    }
+
     //Based on the level/screen you come from, the Register Menu will be loaded differently
-    void Load(GameManager::Level level_p){
+    void Load(GameManager::Level level_p, UserManager::User *user_edit){
         GameManager::game_status.level = GameManager::Level::REGISTER_MENU;
         
         selected_item = -1;
@@ -502,16 +561,24 @@ namespace RegisterMenu{
             form_user.is_admin = false;
         }
 
-        CleanForm(form_user.is_admin);
+        if(user_edit == nullptr){
+            edit_mode = false;
+            CleanForm(form_user.is_admin);
+        }else{
+            edit_mode = true;
+            LoadFormUserEdit(user_edit);
+        }
+
     }
 
     //REGISTER MENU UPDATE
 
     //In case its the first ever user being registered, or in case the logged user is not an admin (or there's no logged user at all)
-    //The fields CREDITS and ADMIN will not be modifieable
+    //The fields CREDITS and ADMIN will not be modifieable.
+    //Same goes to the Username TextInput if the menu is opened in edit mode
     bool IsUneditable(RegisterItems r_item){
         return (
-            (r_item == RegisterItems::CREDITS_TI || r_item == RegisterItems::ADMIN_CHK) &&
+            (r_item == RegisterItems::CREDITS_TI || r_item == RegisterItems::ADMIN_CHK || (r_item == RegisterItems::USERNAME_TI && edit_mode)) &&
             (
                 TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0 || 
                 GameManager::game_status.logged_user == nullptr || 

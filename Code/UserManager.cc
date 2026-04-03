@@ -228,6 +228,7 @@ namespace UserManager{
         bool is_registered = true;
         TList::ListNode** aux_list = (TList::ListNode**) &user_list;
 
+        //Creates a new user copying an existing one
         aux_info.user_info = NewUser(new_user);
 
         if(TList::InsertList(aux_list, TList::ListType::USER, aux_info)){
