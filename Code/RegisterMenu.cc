@@ -30,11 +30,15 @@ namespace RegisterMenu{
     UserManager::User* form_user_edit;
 
     //ACTIONS
+    void BackAction(){
+        if(prev_level == GameManager::Level::ADMIN_MENU){
+            AdminMenu::Load();
+        }else{
+            LoginMenu::Load(GameManager::Level::REGISTER_MENU);
+        }
+    }
 
-    //Copies form/menu_items values into User form_user with the corresponding typing conversions 
-    //and saves the user on registered users list/tree. 
-    //After finishing the registration, goes back to one of the possible previous pages before registration
-    void SaveAction(){
+    void SaveNewUser(){
         UserManager::FreeUserMemory(&form_user);
         form_user = UserManager::NewUser();
 
@@ -61,11 +65,7 @@ namespace RegisterMenu{
             form_user.is_admin = (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked;
 
             if(UserManager::RegisterNewUser(form_user)){
-                if(prev_level == GameManager::Level::ADMIN_MENU){
-                    AdminMenu::Load();
-                }else{
-                    LoginMenu::Load(GameManager::Level::REGISTER_MENU);
-                }
+                BackAction();
             }else{
                 //TO_DO GRAPHIC MODE
                 printf("USERNAME TAKEN\n");
@@ -76,11 +76,45 @@ namespace RegisterMenu{
         }
     }
 
-    void BackAction(){
-        if(prev_level == GameManager::Level::ADMIN_MENU){
-            AdminMenu::Load();
+    void SaveRegisteredUser(){
+        strcpy(form_user_edit->username, (menu_items+RegisterItems::USERNAME_TI)->item.text_item.input_text.text);
+        strcpy(form_user_edit->password, (menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text);
+        strcpy(form_user_edit->alias, (menu_items + RegisterItems::ALIAS_TI)->item.text_item.input_text.text);
+
+        if(strlen(form_user_edit->username) > 0 && strlen(form_user_edit->password) > 0 && strlen(form_user_edit->alias) > 0){
+
+            strcpy(form_user_edit->email, (menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text);
+            strcat(form_user_edit->email, "@ASTEROIDS.ESAT");
+
+            strcpy(form_user_edit->name, (menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text);
+            strcpy(form_user_edit->surname, (menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text);
+
+            form_user_edit->day_dob = atoi((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text);
+            form_user_edit->month_dob = atoi((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text);
+            form_user_edit->year_dob = atoi((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text);
+
+            strcpy(form_user_edit->country, (menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text);
+            strcpy(form_user_edit->province, (menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text);
+
+            form_user_edit->credits = atoi((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text);
+            form_user_edit->is_admin = (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked;
+
+            TList::SaveList((TList::ListNode**) &(UserManager::user_list), UserManager::user_list_dat, UserManager::user_list_dat_path);
+            BackAction();
         }else{
-            LoginMenu::Load(GameManager::Level::REGISTER_MENU);
+            //TO_DO GRAPHIC MODE
+            printf("USERNAME, PASSWORD AND ALIAS ARE MANDATORY\n");
+        }
+    }
+
+    //Copies form/menu_items values into User form_user with the corresponding typing conversions 
+    //and saves the user on registered users list/tree. 
+    //After finishing the registration, goes back to one of the possible previous pages before registration
+    void SaveAction(){
+        if(edit_mode){
+            SaveRegisteredUser();
+        }else{
+            SaveNewUser();
         }
     }
 
@@ -443,65 +477,72 @@ namespace RegisterMenu{
     }
 
     //REGISTER MENU LOAD
+    //In case its the first ever user being registered, or in case the logged user is not an admin (or there's no logged user at all)
+    //The fields CREDITS and ADMIN will not be modifieable.
+    //Same goes to the Username TextInput if the menu is opened in edit mode
+    bool IsUneditable(RegisterItems r_item){
+        return (
+            ((r_item == RegisterItems::CREDITS_TI || r_item == RegisterItems::ADMIN_CHK) &&
+            (
+                TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0 || 
+                GameManager::game_status.logged_user == nullptr || 
+                !((GameManager::game_status.logged_user)->is_admin)
+            ))
+            ||
+            (r_item == RegisterItems::USERNAME_TI && edit_mode)
+        );
+    }
 
     void CleanForm(bool is_admin = false){
         strcpy((menu_items + RegisterItems::USERNAME_TI)->item.text_item.input_text.text, "\0");
-        strcpy((menu_items + RegisterItems::USERNAME_TI)->item.text_item.pointer, "|\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::USERNAME_TI)->item.text_item));
 
         strcpy((menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text, "\0");
-        strcpy((menu_items + RegisterItems::PASSWORD_TI)->item.text_item.pointer, "|\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::PASSWORD_TI)->item.text_item));
         
         strcpy((menu_items + RegisterItems::ALIAS_TI)->item.text_item.input_text.text, "\0");
-        strcpy((menu_items + RegisterItems::ALIAS_TI)->item.text_item.pointer, "|\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::ALIAS_TI)->item.text_item));
         
         strcpy((menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text, "\0");
-        strcpy((menu_items + RegisterItems::EMAIL_TI)->item.text_item.pointer, "|\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::EMAIL_TI)->item.text_item));
         
         strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text, "\0");
-        strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.pointer, "|\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::NAME_TI)->item.text_item));
         
         strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text, "\0");
-        strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.pointer, "|\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::SURNAME_TI)->item.text_item));
 
         strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text, "1\0");
-        strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.pointer, "  |\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item));
         
         strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text, "1\0");
-        strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.pointer, "  |\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item));
         
         strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text, "1979\0");
-        strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.pointer, "    |\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item));
 
         strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text, "\0");
-        strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.pointer, "|\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::COUNTRY_TI)->item.text_item));
         
         strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text, "\0");
-        strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.pointer, "|\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::PROVINCE_TI)->item.text_item));
 
         strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text, "3\0");
-        strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.pointer, " |\0");
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::CREDITS_TI)->item.text_item));
         
         (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = is_admin;
-    }
-
-    void AdjustPointerLength(UILib::TextInput* ti){
-        // printf("ADJUST %d\n",strlen(ti->input_text.text));
-        Utils::StringFillWithChar(ti->pointer, UserManager::kDefaultStrL,' ', strlen(ti->input_text.text));
-
-        *(ti->pointer+strlen(ti->input_text.text)) = '|';
-        *(ti->pointer+strlen(ti->input_text.text)+1) = '\0';
     }
 
     void LoadFormUserEdit(UserManager::User *user_edit){
         form_user_edit = user_edit;
         strcpy((menu_items + RegisterItems::USERNAME_TI)->item.text_item.input_text.text, form_user_edit->username);
-        AdjustPointerLength(&((menu_items + RegisterItems::USERNAME_TI)->item.text_item));
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::USERNAME_TI)->item.text_item));
 
         strcpy((menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text, form_user_edit->password);
-        AdjustPointerLength(&((menu_items + RegisterItems::PASSWORD_TI)->item.text_item));
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::PASSWORD_TI)->item.text_item));
         
         strcpy((menu_items + RegisterItems::ALIAS_TI)->item.text_item.input_text.text, form_user_edit->alias);
-        AdjustPointerLength(&((menu_items + RegisterItems::ALIAS_TI)->item.text_item));
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::ALIAS_TI)->item.text_item));
         
         //Checks if there's a registered email
         if(Utils::FindCharIndexInString(form_user_edit->email,'@') <= 0){
@@ -512,33 +553,33 @@ namespace RegisterMenu{
             strncpy((menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text, form_user_edit->email, Utils::FindCharIndexInString(form_user_edit->email,'@'));
             *((menu_items + RegisterItems::EMAIL_TI)->item.text_item.input_text.text+Utils::FindCharIndexInString(form_user_edit->email,'@')) = '\0';
         }
-        AdjustPointerLength(&((menu_items + RegisterItems::EMAIL_TI)->item.text_item));
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::EMAIL_TI)->item.text_item));
         
-        // strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text, "\0");
-        // strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.pointer, "|\0");
+        strcpy((menu_items + RegisterItems::NAME_TI)->item.text_item.input_text.text, form_user_edit->name);
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::NAME_TI)->item.text_item));
         
-        // strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text, "\0");
-        // strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.pointer, "|\0");
+        strcpy((menu_items + RegisterItems::SURNAME_TI)->item.text_item.input_text.text, form_user_edit->surname);
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::SURNAME_TI)->item.text_item));
 
-        // strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text, "01\0");
-        // strcpy((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.pointer, "  |\0");
+        itoa(form_user_edit->day_dob, (menu_items + RegisterItems::DOB_DAY_TI)->item.text_item.input_text.text, 10);
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::DOB_DAY_TI)->item.text_item));
         
-        // strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text, "01\0");
-        // strcpy((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.pointer, "  |\0");
+        itoa(form_user_edit->month_dob, (menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item.input_text.text, 10);
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::DOB_MONTH_TI)->item.text_item));
         
-        // strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text, "1979\0");
-        // strcpy((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.pointer, "    |\0");
+        itoa(form_user_edit->year_dob, (menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item.input_text.text, 10);
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::DOB_YEAR_TI)->item.text_item));
 
-        // strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text, "\0");
-        // strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.pointer, "|\0");
+        strcpy((menu_items + RegisterItems::COUNTRY_TI)->item.text_item.input_text.text, form_user_edit->country);
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::COUNTRY_TI)->item.text_item));
         
-        // strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text, "\0");
-        // strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.pointer, "|\0");
+        strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text, form_user_edit->province);
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::PROVINCE_TI)->item.text_item));
 
-        // strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text, "3\0");
-        // strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.pointer, " |\0");
+        itoa(form_user_edit->credits, (menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text, 10);
+        UILib::AdjustPointerLength(&((menu_items + RegisterItems::CREDITS_TI)->item.text_item));
         
-        // (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = is_admin;
+        (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = form_user_edit->is_admin;
     }
 
     //Based on the level/screen you come from, the Register Menu will be loaded differently
@@ -569,23 +610,43 @@ namespace RegisterMenu{
             LoadFormUserEdit(user_edit);
         }
 
+        //Changes Uneditable fields border color to red and ensures the correct border color for the Editable ones
+        for(int i = 0; i < (int)RegisterItems::TOTAL_ITEMS; i++){
+            if(IsUneditable((RegisterItems)i)){
+                switch ((menu_items+i)->item_type){
+                    case UILib::ItemType::BUTTON:
+                        (menu_items+i)->item.btn_item.border_color = {255,0,0,255};
+                    break;
+                    case UILib::ItemType::BUTTON_PA:
+                        (menu_items+i)->item.btn_pa_item.border_color = {255,0,0,255};
+                    break;
+                    case UILib::ItemType::TEXT_INPUT:
+                        (menu_items+i)->item.text_item.border_color = {255,0,0,255};
+                    break;
+                    case UILib::ItemType::CHECKBOX:
+                        (menu_items+i)->item.chk_item.border_color = {255,0,0,255};
+                    break;
+                }
+            }else{
+                switch ((menu_items+i)->item_type){
+                    case UILib::ItemType::BUTTON:
+                        (menu_items+i)->item.btn_item.border_color = (menu_items+i)->item.btn_item.fill_color;
+                    break;
+                    case UILib::ItemType::BUTTON_PA:
+                        (menu_items+i)->item.btn_pa_item.border_color = (menu_items+i)->item.btn_pa_item.fill_color;
+                    break;
+                    case UILib::ItemType::TEXT_INPUT:
+                        (menu_items+i)->item.text_item.border_color = {255,255,255,255};
+                    break;
+                    case UILib::ItemType::CHECKBOX:
+                        (menu_items+i)->item.chk_item.border_color = {255,255,255,255};
+                    break;
+                }
+            }
+        }
     }
 
     //REGISTER MENU UPDATE
-
-    //In case its the first ever user being registered, or in case the logged user is not an admin (or there's no logged user at all)
-    //The fields CREDITS and ADMIN will not be modifieable.
-    //Same goes to the Username TextInput if the menu is opened in edit mode
-    bool IsUneditable(RegisterItems r_item){
-        return (
-            (r_item == RegisterItems::CREDITS_TI || r_item == RegisterItems::ADMIN_CHK || (r_item == RegisterItems::USERNAME_TI && edit_mode)) &&
-            (
-                TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0 || 
-                GameManager::game_status.logged_user == nullptr || 
-                !((GameManager::game_status.logged_user)->is_admin)
-            )
-        );
-    }
 
     //Whole Register Menu update method
     void Update(){
@@ -600,18 +661,20 @@ namespace RegisterMenu{
 
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
+            esat::ResetBufferdKeyInput();
             do{
                 if(selected_item <= 0){
                     selected_item = ((int)RegisterItems::TOTAL_ITEMS) - 1;
                 }else{
                     selected_item--;
                 }
-            }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
+            }while(!UILib::IsItemVisible(*(menu_items+selected_item)) || IsUneditable((RegisterItems)selected_item));
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
+            esat::ResetBufferdKeyInput();
             do{
                 ++selected_item %= (int)RegisterItems::TOTAL_ITEMS;
-            }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
+            }while(!UILib::IsItemVisible(*(menu_items+selected_item)) || IsUneditable((RegisterItems)selected_item));
         }
         
         for(int i = 0; i < (int)RegisterItems::TOTAL_ITEMS; i++){

@@ -326,6 +326,7 @@ namespace LoginMenu{
 
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
+            esat::ResetBufferdKeyInput();
             if(selected_item <= 0){
                 selected_item = ((int)LoginItems::TOTAL_ITEMS) - 1;
             }else{
@@ -333,6 +334,7 @@ namespace LoginMenu{
             }
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
+            esat::ResetBufferdKeyInput();
             ++selected_item %= (int)LoginItems::TOTAL_ITEMS;
         }
         

@@ -69,6 +69,7 @@ namespace UILib{
             case UILib::ItemType::TEXT_INPUT:
                 if(Utils::MouseInCollider(ui_item->item.text_item.input_box) && esat::MouseButtonDown(0)){
                     *selected_i = item_index;
+                    esat::ResetBufferdKeyInput();
                 }
                 
                 if(*selected_i == item_index){
@@ -317,7 +318,6 @@ namespace UILib{
         int old_length;
 
         input_c = esat::GetNextPressedKey();
-    
 
         if(strlen(string) < max_length && input_c != 0 && input_c >= '0' && input_c <= '9'){
             old_length = strlen(string);
@@ -332,6 +332,14 @@ namespace UILib{
         }
 
         return is_input;
+    }
+
+    void AdjustPointerLength(UILib::TextInput* ti){
+        // printf("ADJUST %d\n",strlen(ti->input_text.text));
+        Utils::StringFillWithChar(ti->pointer, UserManager::kDefaultStrL,' ', strlen(ti->input_text.text));
+
+        *(ti->pointer+strlen(ti->input_text.text)) = '|';
+        *(ti->pointer+strlen(ti->input_text.text)+1) = '\0';
     }
 
 
@@ -562,6 +570,9 @@ namespace UILib{
         switch (item->item_type){
             case UILib::ItemType::BUTTON:
                 free(item->item.btn_item.button_text.text);
+            break;
+            case UILib::ItemType::BUTTON_PA:
+                free(item->item.btn_pa_item.button_text.text);
             break;
             case UILib::ItemType::TEXT_INPUT:
                 free(item->item.text_item.input_text.text);

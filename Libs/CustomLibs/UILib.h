@@ -154,6 +154,8 @@ namespace UILib{
         int max_length = UserManager::kDefaultStrL
     );
 
+    void AdjustPointerLength(UILib::TextInput* ti);
+
     //Given a TextInput, it gets checked to manage workability
     void UpdateTextInput(TextInput *ti);
 
