@@ -21,6 +21,7 @@ namespace MainMenu{
         PLAY_BTN,
         HIGHSCORES_BTN,
         QUIT_BTN,
+        USER_BTN,
         ADMIN_BTN,
         TOTAL_ITEMS
     };

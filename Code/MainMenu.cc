@@ -17,6 +17,7 @@
 #include "./MainMenu.h"
 #include "./PlayMenu.h"
 #include "./HighscoresMenu.h"
+#include "./LoginMenu.h"
 #include "./AdminMenu.h"
 
 namespace MainMenu{
@@ -36,6 +37,10 @@ namespace MainMenu{
 
     void QuitAction(){
         GameManager::game_status.level = GameManager::Level::QUIT;
+    }
+
+    void ChangeUserAction(){
+        LoginMenu::Load(GameManager::Level::MAIN_MENU);
     }
 
     void AdminAction(){
@@ -119,6 +124,23 @@ namespace MainMenu{
         );
 
         UILib::InitButton(
+            &((menu_items+((int)MainMenuItems::USER_BTN))->item.btn_item),
+            {
+                {50.0f, Utils::kWindowHeight-80.0f},
+                {strlen((menu_items+((int)MainMenuItems::USER_BTN))->item_name.text)*(float)Utils::kBaseFontSize+50.0f, Utils::kWindowHeight-30.0f}
+            },
+            {100,100,100,200},
+            {100,100,100,200},
+            {
+                text_color,
+                (menu_items+((int)MainMenuItems::USER_BTN))->item_name.text,
+                (float)Utils::kBaseFontSize
+            },
+            true,
+            ChangeUserAction
+        );
+
+        UILib::InitButton(
             &((menu_items+((int)MainMenuItems::ADMIN_BTN))->item.btn_item),
             {
                 {Utils::kWindowWidth-150.0f, Utils::kWindowHeight-80.0f},
@@ -160,6 +182,11 @@ namespace MainMenu{
             {{255,255,255,255},"QUIT GAME", Utils::kBaseFontSize*2.0f}
         );
         UILib::InitItem(
+            (menu_items + ((int)MainMenuItems::USER_BTN)),
+            UILib::ItemType::BUTTON,
+            {{255,255,255,255},"USER", Utils::kBaseFontSize*2.0f}
+        );
+        UILib::InitItem(
             (menu_items + ((int)MainMenuItems::ADMIN_BTN)),
             UILib::ItemType::BUTTON,
             {{255,255,255,255},"ADMIN", Utils::kBaseFontSize*2.0f}
@@ -184,6 +211,9 @@ namespace MainMenu{
             (menu_items+MainMenuItems::ADMIN_BTN)->item.btn_item.is_visible = false;
         }
         
+        //Changes button text and adjusts button size (changing collider.P2) based on username length
+        (menu_items+MainMenuItems::USER_BTN)->item.btn_item.button_text.text = GameManager::game_status.logged_user->username;
+        (menu_items+MainMenuItems::USER_BTN)->item.btn_item.collider.P2 = {strlen(GameManager::game_status.logged_user->username)*(float)Utils::kBaseFontSize+50.0f, Utils::kWindowHeight-30.0f};
         GameManager::game_status.level = GameManager::Level::MAIN_MENU;
     }
 
